@@ -1,0 +1,8 @@
+GameLiftServer_Data/
+Library/
+Logs/
+MonoBleedingEdge/
+Temp/
+*.log
+*.exe
+UnityPlayer.dll
