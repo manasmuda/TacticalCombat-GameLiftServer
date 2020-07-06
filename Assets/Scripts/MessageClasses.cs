@@ -57,7 +57,7 @@ public class SimpleMessage
     public List<object> listData { get; set; }
     public Dictionary<string, object> dictData { get; set; }
     public List<Dictionary<string, object>> listdictdata { get; set; }
-
+    public bool win { get; set; }
     // As we are using one generic message for simplicity, we always have all possible data here
     // You would likely want to use different classes for different message types
 

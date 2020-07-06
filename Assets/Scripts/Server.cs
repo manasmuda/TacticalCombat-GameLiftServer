@@ -315,65 +315,12 @@ public class Server : MonoBehaviour
                             if (type2 == "soldier" || type2 == "knight")
                             {
                                 Debug.Log("Type 2: Soilder || Knight");
-                                Dictionary<string, object> temp11 = new Dictionary<string, object> { };
-                                Dictionary<string, object> temp21 = new Dictionary<string, object> { };
-                                temp11.Add("myTeam", false);
-                                temp11.Add("id", id2);
-                                temp21.Add("myTeam", true);
-                                temp21.Add("id", id2);
-                                if (pieceData2["serves"].ToString() == "king")
-                                {
-                                    temp11.Add("action", "dead");
-                                    temp21.Add("action", "dead");
-                                    if (type2 == "soldier")
-                                    {
-                                        temp11.Add("color", "bronze");
-                                        temp21.Add("color", "bronze");
-                                        player2.soldiers[id2]["state"] = "dead";
-                                    }
-                                    else if (type2 == "knight")
-                                    {
-                                        temp11.Add("color", "silver");
-                                        temp21.Add("color", "silver");
-                                        player2.knights[id2]["state"] = "dead";
-                                    }
-                                }
-                                else
-                                {
-                                    temp11.Add("action", "injured");
-                                    temp21.Add("action", "injured");
-                                    if (pieceData2["serves"].ToString() == "lord1")
-                                    {
-                                        temp11.Add("fort", "1");
-                                        temp21.Add("fort", "1");
-                                        player2.fort1.Add(id2);
-                                    }
-                                    else if (pieceData2["serves"].ToString() == "lord2")
-                                    {
-                                        temp11.Add("fort", "2");
-                                        temp21.Add("fort", "2");
-                                        player2.fort2.Add(id2);
-                                    }
-                                    if (type2 == "soldier")
-                                    {
-                                        temp11.Add("color", "bronze");
-                                        temp21.Add("color", "bronze");
-                                        player2.soldiers[id2]["state"] = "injured";
-                                    }
-                                    else
-                                    {
-                                        temp11.Add("color", "silver");
-                                        temp21.Add("color", "silver");
-                                        player2.knights[id2]["state"] = "injured";
-                                    }
-                                }
-                                player2.positionIdMatcher.Remove(dest);
-                                msg1.listdictdata.Add(temp11);
-                                msg2.listdictdata.Add(temp21);
-
+                                MovePiece(player1.king, player1, id1, source, dest, "gold", 1, msg1, msg2);
+                                SoOrKnDI(player2, player1, id2, false, msg1, msg2, type2, type1,dest);
                             }
                             else if (type2 == "lord")
                             {
+                                Debug.Log("Type 2: Lord");
                                 bool win = false;
                                 if (id2.Substring(0, 2).Equals("l1"))
                                 {
@@ -391,506 +338,364 @@ public class Server : MonoBehaviour
                                 }
                                 if (win)
                                 {
-                                    Dictionary<string, object> temp11 = new Dictionary<string, object> { };
-                                    Dictionary<string, object> temp21 = new Dictionary<string, object> { };
-                                    temp11.Add("myTeam", false);
-                                    temp21.Add("myTeam", true);
-                                    temp11.Add("id", id2);
-                                    temp21.Add("id", id2);
-                                    temp11.Add("action", "dead");
-                                    temp21.Add("action", "dead");
-                                    temp11.Add("color", "gold");
-                                    temp21.Add("color", "gold");
-                                    msg1.listdictdata.Add(temp11);
-                                    msg2.listdictdata.Add(temp21);
-                                    if (id2.Substring(0, 2).Equals("l1"))
-                                    {
-                                        player2.lord1["state"] = "dead";
-                                        for (int i = 0; i < player2.fort1.Count; i++)
-                                        {
-                                            string tempId = player2.fort1[i];
-                                            Dictionary<string, object> temp1 = new Dictionary<string, object> { };
-                                            Dictionary<string, object> temp2 = new Dictionary<string, object> { };
-                                            if (tempId.Substring(0, 1).Equals("c") || (tempId.Substring(0, 2).Equals("kn") && Convert.ToInt32(player2.knights[tempId]["power"]) == 7))
-                                            {
-                                                if (tempId.Substring(0, 1).Equals("c"))
-                                                {
-                                                    player2.commanderl1["state"] = "opp";
-                                                }
-                                                else if (tempId.Substring(0, 2).Equals("kn"))
-                                                {
-                                                    player2.knights[tempId]["state"] = "opp";
-                                                }
-                                                int tempPos = findAndFillPlace("1");
-                                                string newId = "kn" + PlayerData.RandomString(7);
-                                                player1.addKnight(tempPos / 10, tempPos % 10, 5, "king", newId);
-                                                temp1.Add("myTeam", true);
-                                                temp1.Add("id", newId);
-                                                temp1.Add("action", "add");
-                                                temp1.Add("type", "knight");
-                                                temp1.Add("color", "silver");
-                                                temp1.Add("power", 5);
-                                                temp1.Add("pos", tempPos);
-                                                temp2.Add("myTeam", false);
-                                                temp2.Add("id", newId);
-                                                temp2.Add("action", "add");
-                                                temp2.Add("color", "silver");
-                                                temp2.Add("pos", tempPos);
-                                            }
-                                            else if (tempId.Substring(0, 2).Equals("kn"))
-                                            {
-                                                player2.knights[tempId]["state"] = "opp";
-                                                int tempPos = findAndFillPlace("1");
-                                                string newId = "so" + PlayerData.RandomString(7);
-                                                int tempPower = 0;
-                                                if (Convert.ToInt32(player2.knights[tempId]["power"]) == 6)
-                                                {
-                                                    tempPower = 4;
-                                                }
-                                                else if (Convert.ToInt32(player2.knights[tempId]["power"]) == 5)
-                                                {
-                                                    tempPower = 3;
-                                                }
-                                                player1.addSoldier(tempPos / 10, tempPos % 10, tempPower, "king", newId);
-                                                temp1.Add("myTeam", true);
-                                                temp1.Add("id", newId);
-                                                temp1.Add("action", "add");
-                                                temp1.Add("type", "soldier");
-                                                temp1.Add("color", "bronze");
-                                                temp1.Add("power", tempPower);
-                                                temp1.Add("pos", tempPos);
-                                                temp2.Add("myTeam", false);
-                                                temp2.Add("id", newId);
-                                                temp2.Add("action", "add");
-                                                temp2.Add("color", "bronze");
-                                                temp2.Add("pos", tempPos);
-                                            }
-                                            else if (tempId.Substring(0, 2).Equals("so"))
-                                            {
-                                                player2.soldiers[tempId]["state"] = "opp";
-                                                int tempPos = findAndFillPlace("1");
-                                                string newId = "so" + PlayerData.RandomString(7);
-                                                int tempPower = 1;
-                                                if (Convert.ToInt32(player2.soldiers[tempId]["power"]) == 4)
-                                                {
-                                                    tempPower = 2;
-                                                }
-                                                player1.addSoldier(tempPos / 10, tempPos % 10, tempPower, "king", newId);
-                                                temp1.Add("myTeam", true);
-                                                temp1.Add("id", newId);
-                                                temp1.Add("action", "add");
-                                                temp1.Add("type", "soldier");
-                                                temp1.Add("color", "bronze");
-                                                temp1.Add("power", tempPower);
-                                                temp1.Add("pos", tempPos);
-                                                temp2.Add("myTeam", false);
-                                                temp2.Add("id", newId);
-                                                temp2.Add("action", "add");
-                                                temp2.Add("color", "bronze");
-                                                temp2.Add("pos", tempPos);
-                                            }
-                                            msg1.listdictdata.Add(temp1);
-                                            msg2.listdictdata.Add(temp2);
-                                        }
-                                        if (Convert.ToString(player1.commanderl1["state"]) == "alive")
-                                        {
-                                            //player1.commanderl1["serves"] = "king";
-                                            player1.commanderl1["state"] = "change";
-                                            string tempid1 = Convert.ToString(player1.commanderl1["id"]);
-                                            tempid1 = "kn" + tempid1.Substring(2);
-                                            player1.positionIdMatcher.Remove(Convert.ToInt32(player1.commanderl1["posI"]) * 10 + Convert.ToInt32(player1.commanderl1["posJ"]));
-                                            player1.addKnight(Convert.ToInt32(player1.commanderl1["posI"]), Convert.ToInt32(player1.commanderl1["posJ"]), 5, "king", tempid1);
-                                            Dictionary<string, object> temp1 = new Dictionary<string, object> { };
-                                            Dictionary<string, object> temp2 = new Dictionary<string, object> { };
-                                            temp2.Add("myTeam", false);
-                                            temp2.Add("id", player1.commanderl1["id"]);
-                                            temp2.Add("action", "changeserves");
-                                            temp2.Add("newId", tempid1);
-                                            temp2.Add("color", "silver");
-                                            temp1.Add("myTeam", true);
-                                            temp1.Add("id", player1.commanderl1["id"]);
-                                            temp1.Add("action", "changeserves");
-                                            temp1.Add("newId", tempid1);
-                                            temp1.Add("color", "silver");
-                                            msg1.listdictdata.Add(temp1);
-                                            msg2.listdictdata.Add(temp2);
-                                        }
-                                        foreach (KeyValuePair<string, Dictionary<string, object>> tempItem in player1.knights)
-                                        {
-                                            if (Convert.ToString(tempItem.Value["state"]) == "alive" && Convert.ToString(tempItem.Value["serves"]) == "lord1")
-                                            {
-                                                tempItem.Value["power"] = 5;
-                                                tempItem.Value["serves"] = "king";
-                                                player1.knights[tempItem.Key] = tempItem.Value;
-                                                Dictionary<string, object> temp1 = new Dictionary<string, object> { };
-                                                temp1.Add("myTeam", true);
-                                                temp1.Add("id", tempItem.Value["id"]);
-                                                temp1.Add("action", "changeserves");
-                                                temp1.Add("newId", tempItem.Value["id"]);
-                                                temp1.Add("color", "silver");
-                                                msg1.listdictdata.Add(temp1);
-                                            }
-                                        }
-                                        foreach (KeyValuePair<string, Dictionary<string, object>> tempItem in player1.soldiers)
-                                        {
-                                            if (Convert.ToString(tempItem.Value["state"]) == "alive" && Convert.ToString(tempItem.Value["serves"]) == "lord1")
-                                            {
-                                                tempItem.Value["power"] = 1;
-                                                tempItem.Value["serves"] = "king";
-                                                player1.knights[tempItem.Key] = tempItem.Value;
-                                                Dictionary<string, object> temp1 = new Dictionary<string, object> { };
-                                                temp1.Add("myTeam", true);
-                                                temp1.Add("id", tempItem.Value["id"]);
-                                                temp1.Add("action", "changeserves");
-                                                temp1.Add("newId", tempItem.Value["id"]);
-                                                temp1.Add("color", "bronze");
-                                                msg1.listdictdata.Add(temp1);
-                                            }
-                                        }
-                                        Dictionary<string, object> temp12 = new Dictionary<string, object> { };
-                                        Dictionary<string, object> temp22 = new Dictionary<string, object> { };
-                                        temp12.Add("myTeam", false);
-                                        temp12.Add("id", "");
-                                        temp12.Add("action", "clearfort");
-                                        temp12.Add("fort", "1");
-                                        temp22.Add("myTeam", true);
-                                        temp22.Add("id", "");
-                                        temp22.Add("action", "clearfort");
-                                        temp22.Add("fort", "1");
-                                        player2.fort1 = null;
-                                        player2.positionIdMatcher.Remove(dest);
-                                        msg1.listdictdata.Add(temp12);
-                                        msg2.listdictdata.Add(temp22);
-                                    }
-                                    else if (id2.Substring(0, 2).Equals("l2"))
-                                    {
-                                        player2.lord2["state"] = "dead";
-                                        for (int i = 0; i < player2.fort2.Count; i++)
-                                        {
-                                            string tempId = player2.fort2[i];
-                                            Dictionary<string, object> temp1 = new Dictionary<string, object> { };
-                                            Dictionary<string, object> temp2 = new Dictionary<string, object> { };
-                                            if (tempId.Substring(0, 1).Equals("c") || (tempId.Substring(0, 2).Equals("kn") && Convert.ToInt32(player2.knights[tempId]["power"]) == 7))
-                                            {
-                                                if (tempId.Substring(0, 1).Equals("c"))
-                                                {
-                                                    player2.commanderl2["state"] = "opp";
-                                                }
-                                                else if (tempId.Substring(0, 2).Equals("kn"))
-                                                {
-                                                    player2.knights[tempId]["state"] = "opp";
-                                                }
-                                                int tempPos = findAndFillPlace("1");
-                                                string newId = "kn" + PlayerData.RandomString(7);
-                                                player1.addKnight(tempPos / 10, tempPos % 10, 5, "king", newId);
-                                                temp1.Add("myTeam", true);
-                                                temp1.Add("id", newId);
-                                                temp1.Add("action", "add");
-                                                temp1.Add("type", "knight");
-                                                temp1.Add("color", "silver");
-                                                temp1.Add("power", 5);
-                                                temp1.Add("pos", tempPos);
-                                                temp2.Add("myTeam", false);
-                                                temp2.Add("id", newId);
-                                                temp2.Add("action", "add");
-                                                temp2.Add("color", "silver");
-                                                temp2.Add("pos", tempPos);
-                                            }
-                                            else if (tempId.Substring(0, 2).Equals("kn"))
-                                            {
-                                                player2.knights[tempId]["state"] = "opp";
-                                                int tempPos = findAndFillPlace("1");
-                                                string newId = "so" + PlayerData.RandomString(7);
-                                                int tempPower = 0;
-                                                if (Convert.ToInt32(player2.knights[tempId]["power"]) == 6)
-                                                {
-                                                    tempPower = 4;
-                                                }
-                                                else if (Convert.ToInt32(player2.knights[tempId]["power"]) == 5)
-                                                {
-                                                    tempPower = 3;
-                                                }
-                                                player1.addSoldier(tempPos / 10, tempPos % 10, tempPower, "king", newId);
-                                                temp1.Add("myTeam", true);
-                                                temp1.Add("id", newId);
-                                                temp1.Add("action", "add");
-                                                temp1.Add("type", "soldier");
-                                                temp1.Add("color", "bronze");
-                                                temp1.Add("power", tempPower);
-                                                temp1.Add("pos", tempPos);
-                                                temp2.Add("myTeam", false);
-                                                temp2.Add("id", newId);
-                                                temp2.Add("action", "add");
-                                                temp2.Add("color", "bronze");
-                                                temp2.Add("pos", tempPos);
-                                            }
-                                            else if (tempId.Substring(0, 2).Equals("so"))
-                                            {
-                                                player2.soldiers[tempId]["state"] = "opp";
-                                                int tempPos = findAndFillPlace("1");
-                                                string newId = "so" + PlayerData.RandomString(7);
-                                                int tempPower = 1;
-                                                if (Convert.ToInt32(player2.soldiers[tempId]["power"]) == 4)
-                                                {
-                                                    tempPower = 2;
-                                                }
-                                                player1.addSoldier(tempPos / 10, tempPos % 10, tempPower, "king", newId);
-                                                temp1.Add("myTeam", true);
-                                                temp1.Add("id", newId);
-                                                temp1.Add("action", "add");
-                                                temp1.Add("type", "soldier");
-                                                temp1.Add("color", "bronze");
-                                                temp1.Add("power", tempPower);
-                                                temp1.Add("pos", tempPos);
-                                                temp2.Add("myTeam", false);
-                                                temp2.Add("id", newId);
-                                                temp2.Add("action", "add");
-                                                temp2.Add("color", "bronze");
-                                                temp2.Add("pos", tempPos);
-                                            }
-                                            msg1.listdictdata.Add(temp1);
-                                            msg2.listdictdata.Add(temp2);
-                                        }
-                                        if (Convert.ToString(player1.commanderl2["state"]) == "alive")
-                                        {
-                                            //player1.commanderl2["serves"] = "king";
-                                            player1.commanderl2["state"] = "change";
-                                            string tempid1 = Convert.ToString(player1.commanderl2["id"]);
-                                            tempid1 = "kn" + tempid1.Substring(2);
-                                            player1.positionIdMatcher.Remove(Convert.ToInt32(player1.commanderl2["posI"]) * 10 + Convert.ToInt32(player1.commanderl2["posJ"]));
-                                            player1.addKnight(Convert.ToInt32(player1.commanderl2["posI"]), Convert.ToInt32(player1.commanderl2["posJ"]), 5, "king", tempid1);
-                                            Dictionary<string, object> temp1 = new Dictionary<string, object> { };
-                                            Dictionary<string, object> temp2 = new Dictionary<string, object> { };
-                                            temp2.Add("myTeam", false);
-                                            temp2.Add("id", player1.commanderl2["id"]);
-                                            temp2.Add("action", "changeserves");
-                                            temp2.Add("newId", tempid1);
-                                            temp2.Add("color", "silver");
-                                            temp1.Add("myTeam", true);
-                                            temp1.Add("id", player1.commanderl2["id"]);
-                                            temp1.Add("action", "changeserves");
-                                            temp1.Add("newId", tempid1);
-                                            temp1.Add("color", "silver");
-                                            msg1.listdictdata.Add(temp1);
-                                            msg2.listdictdata.Add(temp2);
-                                        }
-                                        foreach (KeyValuePair<string, Dictionary<string, object>> tempItem in player1.knights)
-                                        {
-                                            if (Convert.ToString(tempItem.Value["state"]) == "alive" && Convert.ToString(tempItem.Value["serves"]) == "lord2")
-                                            {
-                                                tempItem.Value["power"] = 5;
-                                                tempItem.Value["serves"] = "king";
-                                                player1.knights[tempItem.Key] = tempItem.Value;
-                                                Dictionary<string, object> temp1 = new Dictionary<string, object> { };
-                                                temp1.Add("myTeam", true);
-                                                temp1.Add("id", tempItem.Value["id"]);
-                                                temp1.Add("action", "changeserves");
-                                                temp1.Add("newId", tempItem.Value["id"]);
-                                                temp1.Add("color", "silver");
-                                                msg1.listdictdata.Add(temp1);
-                                            }
-                                        }
-                                        foreach (KeyValuePair<string, Dictionary<string, object>> tempItem in player1.soldiers)
-                                        {
-                                            if (Convert.ToString(tempItem.Value["state"]) == "alive" && Convert.ToString(tempItem.Value["serves"]) == "lord2")
-                                            {
-                                                tempItem.Value["power"] = 1;
-                                                tempItem.Value["serves"] = "king";
-                                                player1.knights[tempItem.Key] = tempItem.Value;
-                                                Dictionary<string, object> temp1 = new Dictionary<string, object> { };
-                                                temp1.Add("myTeam", true);
-                                                temp1.Add("id", tempItem.Value["id"]);
-                                                temp1.Add("action", "changeserves");
-                                                temp1.Add("newId", tempItem.Value["id"]);
-                                                temp1.Add("color", "bronze");
-                                                msg1.listdictdata.Add(temp1);
-                                            }
-                                        }
-                                        Dictionary<string, object> temp12 = new Dictionary<string, object> { };
-                                        Dictionary<string, object> temp22 = new Dictionary<string, object> { };
-                                        temp12.Add("myTeam", false);
-                                        temp12.Add("id", "");
-                                        temp12.Add("action", "clearfort");
-                                        temp12.Add("fort", "2");
-                                        temp22.Add("myTeam", true);
-                                        temp22.Add("id", "");
-                                        temp22.Add("action", "clearfort");
-                                        temp22.Add("fort", "2");
-                                        player2.fort2 = null;
-                                        player2.positionIdMatcher.Remove(dest);
-                                        msg1.listdictdata.Add(temp12);
-                                        msg2.listdictdata.Add(temp22);
-                                    }
+                                    MovePiece(player1.king, player1, id1, source, dest, "gold", 1, msg1, msg2);
+                                    LoD(player2, player1, id2, false, msg1, msg2, type2, type1, dest);
                                 }
                                 else
                                 {
-                                    SimpleMessage msgg1 = new SimpleMessage(MessageType.GameResult, "Your King Died.You lost the war");
-                                    SimpleMessage msgg2 = new SimpleMessage(MessageType.GameResult, "Your opponent's King Died.You won the war");
-                                    nserver.SendM(0, msgg1);
-                                    nserver.SendM(1, msgg2);
-                                    nserver.gamelift.TerminateGameSession();
-                                    this.resetServer();
-                                    nserver.ResetNetworkServer();
+                                    MovePiece(player1.king, player1, id1, source, dest, "gold", 2, msg1, msg2, false);
+                                    KingD(true);
                                     return;
                                 }
                             }
                             else if (type2 == "king")
                             {
+                                Debug.Log("Type 2: King");
                                 if (Convert.ToString(player2.commanderk["state"]) == "alive")
                                 {
-                                    SimpleMessage msgg1 = new SimpleMessage(MessageType.GameResult, "Your King Died.You lost the war");
-                                    SimpleMessage msgg2 = new SimpleMessage(MessageType.GameResult, "Your opponent's King Died.You won the war");
-                                    nserver.SendM(0, msgg1);
-                                    nserver.SendM(1, msgg2);
-                                    nserver.gamelift.TerminateGameSession();
-                                    this.resetServer();
-                                    nserver.ResetNetworkServer();
+                                    MovePiece(player1.king, player1, id1, source, dest, "gold", 2, msg1, msg2, false);
+                                    KingD(true);
                                     return;
                                 }
                                 else
                                 {
-                                    SimpleMessage msgg2 = new SimpleMessage(MessageType.GameResult, "Your King Died.You lost the war");
-                                    SimpleMessage msgg1 = new SimpleMessage(MessageType.GameResult, "Your opponent's King Died.You won the war");
-                                    nserver.SendM(0, msgg1);
-                                    nserver.SendM(1, msgg2);
-                                    nserver.gamelift.TerminateGameSession();
-                                    this.resetServer();
-                                    nserver.ResetNetworkServer();
+                                    MovePiece(player1.king, player1, id1, source, dest, "gold", 1, msg1, msg2);
+                                    KingD(false);
                                     return;
                                 }
                             }
                             else if (type2 == "commander")
                             {
-                                SimpleMessage msgg1 = new SimpleMessage(MessageType.GameResult, "Your King Died.You lost the war");
-                                SimpleMessage msgg2 = new SimpleMessage(MessageType.GameResult, "Your opponent's King Died.You won the war");
-                                nserver.SendM(0, msgg1);
-                                nserver.SendM(1, msgg2);
-                                nserver.gamelift.TerminateGameSession();
-                                this.resetServer();
-                                nserver.ResetNetworkServer();
-                                return;
+                                Debug.Log("Type 2: Commander");
+                                int f1=source/10;
+                                int f2 = dest/10;
+                                if ((f2 - f1) == -1) //Head-On Attack
+                                {
+                                    MovePiece(player1.king, player1, id1, source, dest, "gold", 2, msg1, msg2, false);
+                                    KingD(true);
+                                    return;
+                                }
+                                else
+                                {
+                                    MovePiece(player1.king, player1, id1, source, dest, "gold", 1, msg1, msg2);
+                                    ComD(pieceData2, player2, false,id2, msg1, msg2, dest);
+                                }
                             }
-                            Dictionary<string, object> temp10 = new Dictionary<string, object> { };
-                            Dictionary<string, object> temp20 = new Dictionary<string, object> { };
-                            temp10.Add("myTeam", true);
-                            temp10.Add("id", id1);
-                            temp10.Add("action", "move");
-                            temp10.Add("source", source);
-                            temp10.Add("dest", dest);
-                            temp10.Add("color", "gold");
-                            temp20.Add("myTeam", false);
-                            temp20.Add("id", id1);
-                            temp20.Add("action", "move");
-                            temp20.Add("source", source);
-                            temp20.Add("dest", dest);
-                            temp20.Add("color", "gold");
-                            boardPosStates[source] = 0;
-                            boardPosStates[dest] = 1;
-                            player1.king["posI"] = Convert.ToInt32(Math.Floor(Convert.ToDouble(dest / 10)));
-                            player1.king["posJ"] = dest % 10;
-                            player1.positionIdMatcher.Remove(source);
-                            player1.positionIdMatcher.Add(dest, id1);
-                            msg1.listdictdata.Add(temp10);
-                            msg2.listdictdata.Add(temp20);
-                            msg1.listData = boardPosStates.ConvertAll<object>(k => k);
-                            msg2.listData = boardPosStates.ConvertAll<object>(k => k);
+                            
                         }
                         else if (type1 == "lord")
                         {
-
+                            Debug.Log("Type 1: Lord");
+                            if (type2 == "soldier" || type2 == "knight")
+                            {
+                                Debug.Log("Type 2: Soilder || Knight");
+                                MovePiece(pieceData1, player1, id1, source, dest, "gold", 1, msg1, msg2);
+                                SoOrKnDI(player2, player1, id2, false, msg1, msg2, type2, type1, dest);
+                            }
+                            else if (type2 == "lord")
+                            {
+                                Debug.Log("Type 2: Lord");
+                                bool win = false;
+                                if (id2.Substring(0, 2).Equals("l1"))
+                                {
+                                    if (player2.commanderl1["state"] != "alive")
+                                    {
+                                        win = true;
+                                    }
+                                }
+                                else if (id2.Substring(0, 2).Equals("l2"))
+                                {
+                                    if (player2.commanderl2["state"] != "alive")
+                                    {
+                                        win = true;
+                                    }
+                                }
+                                if (win)
+                                {
+                                    MovePiece(pieceData1, player1, id1, source, dest, "gold", 1, msg1, msg2);
+                                    LoD(player2, player1, id2, false, msg1, msg2, type2, type1, dest);
+                                }
+                                else
+                                {
+                                    MovePiece(pieceData1, player1, id1, source, dest, "gold", 2, msg1, msg2, false);
+                                    LoD(player1, player2, id1, true, msg1, msg2, type1, type2, dest);
+                                }
+                            }
+                            else if (type2 == "king")
+                            {
+                                Debug.Log("Type 2: King");
+                                if (Convert.ToString(player2.commanderk["state"]) == "alive")
+                                {
+                                    MovePiece(pieceData1, player1, id1, source, dest, "gold", 2, msg1, msg2, false);
+                                    LoD(player1, player2, id1, true, msg1, msg2, type1, type2, dest);
+                                }
+                                else
+                                {
+                                    MovePiece(pieceData1, player1, id1, source, dest, "gold", 1, msg1, msg2);
+                                    KingD(false);
+                                    return;
+                                }
+                            }
+                            else if (type2 == "commander")
+                            {
+                                Debug.Log("Type 2: Commander");
+                                int f1 = source / 10;
+                                int f2 = dest / 10;
+                                if ((f2 - f1) == -1) //Head-On Attack
+                                {
+                                    MovePiece(pieceData1, player1, id1, source, dest, "gold", 2, msg1, msg2, true);
+                                    LoD(player1, player2, id1, true, msg1, msg2, type1, type2, dest);
+                                }
+                                else
+                                {
+                                    MovePiece(pieceData1, player1, id1, source, dest, "gold", 1, msg1, msg2);
+                                    ComD(pieceData2, player2, false, id2, msg1, msg2, dest);
+                                }
+                            }
                         }
                         else if (type1 == "commander")
                         {
-
+                            Debug.Log("Type 1: Commander");
+                            MovePiece(pieceData1, player1, id1, source, dest, "silver", 1, msg1, msg2);
+                            if (type2 == "soldier" || type2 == "knight")
+                            {
+                                Debug.Log("Type 2: Soilder || Knight");
+                                SoOrKnDI(player2, player1, id2, false, msg1, msg2, type2, type1, dest);
+                            }
+                            else if (type2 == "lord")
+                            {
+                                Debug.Log("Type 2: Lord");
+                                LoD(player2, player1, id2, false, msg1, msg2, type2, type1, dest);
+                            }
+                            else if (type2 == "king")
+                            {
+                                Debug.Log("Type 2: King");
+                                KingD(false);
+                                return;
+                            }
+                            else if (type2 == "commander")
+                            {
+                                Debug.Log("Type 2: Commander");
+                                ComD(pieceData2, player2, false, id2, msg1, msg2, dest);
+                            }
                         }
                         else if (type1 == "knight")
                         {
-
+                            Debug.Log("Type 1: Knight");
+                            if (type2 == "soldier")
+                            {
+                                Debug.Log("Type 2: Soilder");
+                                MovePiece(pieceData1, player1, id1, source, dest, "silver", 1, msg1, msg2);
+                                SoOrKnDI(player2, player1, id2, false, msg1, msg2, type2, type1, dest);
+                                
+                            }
+                            else if (type2 == "knight")
+                            {
+                                Debug.Log("Type 2: Knight");
+                                int f1 = source / 10;
+                                int f2 = dest / 10;
+                                int curPower1 = Convert.ToInt32(pieceData1["power"]);
+                                int curPower2 = Convert.ToInt32(pieceData2["power"]);
+                                if ((f2 - f1) != -1)  //Sneak Attack
+                                {
+                                    curPower1++;
+                                }
+                                if (curPower1 >= curPower2)
+                                {
+                                    MovePiece(pieceData1, player1, id1, source, dest, "silver", 1, msg1, msg2);
+                                    SoOrKnDI(player2, player1, id2, false, msg1, msg2, type2, type1, dest);
+                                    if (Convert.ToInt32(pieceData1["power"])!=7)
+                                    {
+                                        SoOrKnPI(pieceData1, id1, msg1);
+                                    }
+                                    else
+                                    {
+                                        if (Convert.ToInt32(pieceData2["power"]) == 7)
+                                        {
+                                            Dictionary<string, object> commander = player1.commanderk;
+                                            if (Convert.ToString(pieceData1["serves"]) == "king")
+                                            {
+                                                commander = player1.commanderk;
+                                            }
+                                            else if (Convert.ToString(pieceData1["serves"]) == "lord1")
+                                            {
+                                                commander = player1.commanderl1;
+                                            }
+                                            else if (Convert.ToString(pieceData1["serves"]) == "lord2")
+                                            {
+                                                commander = player1.commanderl2;
+                                            }
+                                            if (commander == null)
+                                            {
+                                                SoOrKnUp(pieceData1, player1, id1, true, msg1, msg2, type1, dest);
+                                            }
+                                            else if (Convert.ToString(commander["state"]) != "alive")
+                                            {
+                                                SoOrKnUp(pieceData1, player1, id1, true, msg1, msg2, type1, dest);
+                                            }
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    MovePiece(pieceData1, player1, id1, source, dest, "silver", 2, msg1, msg2, false);
+                                    SoOrKnDI(player1, player2, id1, true, msg1, msg2, type1, type2, dest);
+                                }
+                            }
+                            else if (type2 == "lord")
+                            {
+                                Debug.Log("Type 2: Lord");
+                                MovePiece(pieceData1, player1, id1, source, dest, "silver", 2, msg1, msg2, false);
+                                SoOrKnDI(player1, player2, id1,true,msg1,msg2,type1,type2,dest);
+                            }
+                            else if (type2 == "king")
+                            {
+                                Debug.Log("Type 2: King");
+                                MovePiece(pieceData1, player1, id1, source, dest, "silver", 2, msg1, msg2, false);
+                                SoOrKnDI(player1, player2, id1, true, msg1, msg2, type1, type2, dest);
+                            }
+                            else if (type2 == "commander")
+                            {
+                                Debug.Log("Type 2: Commander");
+                                int f1 = source / 10;
+                                int f2 = dest / 10;
+                                if ((f2 - f1) != -1) //Sneak Attack
+                                {
+                                    MovePiece(pieceData1, player1, id1, source, dest, "silver", 1, msg1, msg2);
+                                    ComD(pieceData2, player2, false, id2, msg1, msg2, dest);
+                                    if (Convert.ToInt32(pieceData1["power"]) != 7)
+                                    {
+                                        SoOrKnPI(pieceData1, id1, msg1);
+                                    }
+                                    else
+                                    {
+                                        Dictionary<string, object> commander = player1.commanderk;
+                                        if (Convert.ToString(pieceData1["serves"]) == "king")
+                                        {
+                                            commander = player1.commanderk;
+                                        }
+                                        else if (Convert.ToString(pieceData1["serves"]) == "lord1")
+                                        {
+                                            commander = player1.commanderl1;
+                                        }
+                                        else if (Convert.ToString(pieceData1["serves"]) == "lord2")
+                                        {
+                                            commander = player1.commanderl2;
+                                        }
+                                        if (commander == null)
+                                        {
+                                            SoOrKnUp(pieceData1, player1, id1, true, msg1, msg2, type1, dest);
+                                        }
+                                        else if (Convert.ToString(commander["state"]) != "alive")
+                                        {
+                                            SoOrKnUp(pieceData1, player1, id1, true, msg1, msg2, type1, dest);
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    MovePiece(pieceData1, player1, id1, source, dest, "silver", 2, msg1, msg2, false);
+                                    SoOrKnDI(player1, player2, id1, true, msg1, msg2, type1, type2, dest);
+                                }
+                            }
                         }
                         else if (type1 == "soldier")
                         {
-
+                            Debug.Log("Type 1: Soldier");
+                            if (type2 == "soldier")
+                            {
+                                Debug.Log("Type 2: Soilder");
+                                int f1 = source / 10;
+                                int f2 = dest / 10;
+                                int curPower1 = Convert.ToInt32(pieceData1["power"]);
+                                int curPower2 = Convert.ToInt32(pieceData2["power"]);
+                                if ((f2 - f1) != -1)  //Sneak Attack
+                                {
+                                    curPower1++;
+                                }
+                                if (curPower1 >= curPower2)
+                                {
+                                    MovePiece(pieceData1, player1, id1, source, dest, "bronze", 1, msg1, msg2);
+                                    SoOrKnDI(player2, player1, id2, false, msg1, msg2, type2, type1, dest);
+                                    if (Convert.ToInt32(pieceData1["power"]) != 4)
+                                    {
+                                        SoOrKnPI(pieceData1, id1, msg1);
+                                    }
+                                    else
+                                    {
+                                        if (Convert.ToInt32(pieceData2["power"]) == 4)
+                                        {
+                                            SoOrKnUp(pieceData1, player1, id1, true, msg1, msg2, type1, dest);
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    MovePiece(pieceData1, player1, id1, source, dest, "bronze", 2, msg1, msg2,false);
+                                    SoOrKnDI(player1, player2, id1, true, msg1, msg2, type1, type2, dest);
+                                }
+                            }
+                            else if (type2 == "knight")
+                            {
+                                Debug.Log("Type 2: Knight");
+                                MovePiece(pieceData1, player1, id1, source, dest, "silver", 2, msg1, msg2,false);
+                                SoOrKnDI(player1, player2, id1, true, msg1, msg2, type1, type2, dest);
+                            }
+                            else if (type2 == "lord")
+                            {
+                                Debug.Log("Type 2: Lord");
+                                MovePiece(pieceData1, player1, id1, source, dest, "silver", 2, msg1, msg2, false);
+                                SoOrKnDI(player1, player2, id1, true, msg1, msg2, type1, type2, dest);
+                            }
+                            else if (type2 == "king")
+                            {
+                                Debug.Log("Type 2: King");
+                                MovePiece(pieceData1, player1, id1, source, dest, "silver", 2, msg1, msg2, false);
+                                SoOrKnDI(player1, player2, id1, true, msg1, msg2, type1, type2, dest);
+                            }
+                            else if (type2 == "commander")
+                            {
+                                Debug.Log("Type 2: Commander");
+                                MovePiece(pieceData1, player1, id1, source, dest, "silver", 2, msg1, msg2, false);
+                                SoOrKnDI(player1, player2, id1, true, msg1, msg2, type1, type2, dest);
+                            }
                         }
                     }
                     else if (boardPosStates[dest] == 0)
                     {
                         Debug.Log("Handling Player Move:1: Moving to empty place");
-                        Dictionary<string, object> temp11 = new Dictionary<string, object> { };
-                        Dictionary<string, object> temp21 = new Dictionary<string, object> { };
-                        temp11.Add("myTeam", true);
-                        temp11.Add("id", id1);
-                        temp11.Add("action", "move");
-                        temp11.Add("source", source);
-                        temp11.Add("dest", dest);
-                        temp21.Add("myTeam", false);
-                        temp21.Add("id", id1);
-                        temp21.Add("action", "move");
-                        temp21.Add("source", source);
-                        temp21.Add("dest", dest);
                         if (id1.Substring(0, 2).Equals("ki"))
                         {
-                            player1.king["posI"] = Convert.ToInt32(Math.Floor(Convert.ToDouble(dest / 10)));
-                            player1.king["posJ"] = dest % 10;
-                            temp11.Add("color", "gold");
-                            temp21.Add("color", "gold");
+                            MovePiece(player1.king,player1, id1, source, dest, "gold", 1, msg1, msg2);
                         }
                         else if (id1.Substring(0, 2).Equals("l1"))
                         {
-                            player1.lord1["posI"] = Convert.ToInt32(Math.Floor(Convert.ToDouble(dest / 10)));
-                            player1.lord1["posJ"] = dest % 10;
-                            temp11.Add("color", "gold");
-                            temp21.Add("color", "gold");
+                            MovePiece(player1.lord1, player1, id1, source, dest, "gold", 1, msg1, msg2);
                         }
                         else if (id1.Substring(0, 2).Equals("l2"))
                         {
-                            player1.lord2["posI"] = Convert.ToInt32(Math.Floor(Convert.ToDouble(dest / 10)));
-                            player1.lord2["posJ"] = dest % 10;
-                            temp11.Add("color", "gold");
-                            temp21.Add("color", "gold");
+                            MovePiece(player1.lord2, player1, id1, source, dest, "gold", 1, msg1, msg2);
                         }
                         else if (id1.Substring(0, 2).Equals("ck"))
                         {
-                            player1.commanderk["posI"] = Convert.ToInt32(Math.Floor(Convert.ToDouble(dest / 10)));
-                            player1.commanderk["posJ"] = dest % 10;
-                            temp11.Add("color", "silver");
-                            temp21.Add("color", "silver");
+                            MovePiece(player1.commanderk, player1, id1, source, dest, "silver", 1, msg1, msg2);
                         }
                         else if (id1.Substring(0, 2).Equals("c1"))
                         {
-                            player1.commanderl1["posI"] = Convert.ToInt32(Math.Floor(Convert.ToDouble(dest / 10)));
-                            player1.commanderl1["posJ"] = dest % 10;
-                            temp11.Add("color", "silver");
-                            temp21.Add("color", "silver");
+                            MovePiece(player1.commanderl1, player1, id1, source, dest, "silver", 1, msg1, msg2);
                         }
                         else if (id1.Substring(0, 2).Equals("c2"))
                         {
-                            player1.commanderl2["posI"] = Convert.ToInt32(Math.Floor(Convert.ToDouble(dest / 10)));
-                            player1.commanderl2["posJ"] = dest % 10;
-                            temp11.Add("color", "silver");
-                            temp21.Add("color", "silver");
+                            MovePiece(player1.commanderl2, player1, id1, source, dest, "silver", 1, msg1, msg2);
                         }
                         else if (id1.Substring(0, 2).Equals("kn"))
                         {
-                            player1.knights[id1]["posI"] = Convert.ToInt32(Math.Floor(Convert.ToDouble(dest / 10)));
-                            player1.knights[id1]["posJ"] = dest % 10;
-                            temp11.Add("color", "silver");
-                            temp21.Add("color", "silver");
+                            MovePiece(player1.knights[id1], player1, id1, source, dest, "silver", 1, msg1, msg2);
                         }
                         else if (id1.Substring(0, 2).Equals("so"))
                         {
-                            player1.soldiers[id1]["posI"] = Convert.ToInt32(Math.Floor(Convert.ToDouble(dest / 10)));
-                            player1.soldiers[id1]["posJ"] = dest % 10;
-                            temp11.Add("color", "bronze");
-                            temp21.Add("color", "bronze");
+                            MovePiece(player1.soldiers[id1], player1, id1, source, dest, "bronze", 1, msg1, msg2);
                         }
-                        boardPosStates[source] = 0;
-                        boardPosStates[dest] = 1;
-                        player1.positionIdMatcher.Remove(source);
-                        player1.positionIdMatcher.Add(dest, id1);
-                        msg1.listData = boardPosStates.ConvertAll<object>(k => k);
-                        msg2.listData = boardPosStates.ConvertAll<object>(k => k);
-                        msg1.listdictdata.Add(temp11);
-                        msg2.listdictdata.Add(temp21);
                     }
                 }
             }
@@ -995,62 +800,10 @@ public class Server : MonoBehaviour
                             Debug.Log("Type 2: king");
                             if (type1 == "soldier" || type1 == "knight")
                             {
-                                Debug.Log("type2: soldier || knight");
-                                Dictionary<string, object> temp21 = new Dictionary<string, object> { };
-                                Dictionary<string, object> temp11 = new Dictionary<string, object> { };
-                                temp21.Add("myTeam", false);
-                                temp21.Add("id", id1);
-                                temp11.Add("myTeam", true);
-                                temp11.Add("id", id1);
-                                if (pieceData1["serves"].ToString() == "king")
-                                {
-                                    temp11.Add("action", "dead");
-                                    temp21.Add("action", "dead");
-                                    if (type1 == "soldier")
-                                    {
-                                        temp11.Add("color", "bronze");
-                                        temp21.Add("color", "bronze");
-                                        player1.soldiers[id1]["state"] = "dead";
-                                    }
-                                    else if (type2 == "knight")
-                                    {
-                                        temp11.Add("color", "silver");
-                                        temp21.Add("color", "silver");
-                                        player1.knights[id1]["state"] = "dead";
-                                    }
-                                }
-                                else
-                                {
-                                    temp21.Add("action", "injured");
-                                    temp11.Add("action", "injured");
-                                    if (pieceData1["serves"].ToString() == "lord1")
-                                    {
-                                        temp11.Add("fort", "1");
-                                        temp21.Add("fort", "1");
-                                        player1.fort1.Add(id1);
-                                    }
-                                    else if (pieceData1["serves"].ToString() == "lord2")
-                                    {
-                                        temp11.Add("fort", "2");
-                                        temp21.Add("fort", "2");
-                                        player1.fort2.Add(id1);
-                                    }
-                                    if (type1 == "soldier")
-                                    {
-                                        temp11.Add("color", "bronze");
-                                        temp21.Add("color", "bronze");
-                                        player1.soldiers[id1]["state"] = "dead";
-                                    }
-                                    else
-                                    {
-                                        temp11.Add("color", "silver");
-                                        temp21.Add("color", "silver");
-                                        player1.knights[id1]["state"] = "dead";
-                                    }
-                                }
-                                player1.positionIdMatcher.Remove(dest);
-                                msg1.listdictdata.Add(temp11);
-                                msg2.listdictdata.Add(temp21);
+                                Debug.Log("type1: soldier || knight");
+                                MovePiece(player2.king, player2, id2, source, dest, "gold", 2, msg1, msg2);
+                                SoOrKnDI(player1, player2, id1, true, msg1, msg2, type1, type2, dest);
+                                
                             }
                             else if (type1 == "lord")
                             {
@@ -1071,346 +824,13 @@ public class Server : MonoBehaviour
                                 }
                                 if (win)
                                 {
-                                    Dictionary<string, object> temp11 = new Dictionary<string, object> { };
-                                    Dictionary<string, object> temp21 = new Dictionary<string, object> { };
-                                    temp21.Add("myTeam", false);
-                                    temp11.Add("myTeam", true);
-                                    temp21.Add("id", id2);
-                                    temp11.Add("id", id2);
-                                    temp21.Add("action", "dead");
-                                    temp11.Add("action", "dead");
-                                    temp11.Add("color", "gold");
-                                    temp21.Add("color", "gold");
-                                    msg1.listdictdata.Add(temp11);
-                                    msg2.listdictdata.Add(temp21);
-                                    if (id1.Substring(0, 2).Equals("l1"))
-                                    {
-                                        player1.lord1["state"] = "dead";
-                                        for (int i = 0; i < player1.fort1.Count; i++)
-                                        {
-                                            string tempId = player1.fort1[i];
-                                            Dictionary<string, object> temp1 = new Dictionary<string, object> { };
-                                            Dictionary<string, object> temp2 = new Dictionary<string, object> { };
-                                            if (tempId.Substring(0, 1).Equals("c") || (tempId.Substring(0, 2).Equals("kn") && Convert.ToInt32(player2.knights[tempId]["power"]) == 7))
-                                            {
-                                                if (tempId.Substring(0, 1).Equals("c"))
-                                                {
-                                                    player1.commanderl1["state"] = "opp";
-                                                }
-                                                else if (tempId.Substring(0, 2).Equals("kn"))
-                                                {
-                                                    player1.knights[tempId]["state"] = "opp";
-                                                }
-                                                int tempPos = findAndFillPlace("2");
-                                                string newId = "kn" + PlayerData.RandomString(7);
-                                                player2.addKnight(tempPos / 10, tempPos % 10, 5, "king", newId);
-                                                temp2.Add("myTeam", true);
-                                                temp2.Add("id", newId);
-                                                temp2.Add("action", "add");
-                                                temp2.Add("type", "knight");
-                                                temp2.Add("color", "silver");
-                                                temp2.Add("power", 5);
-                                                temp2.Add("pos", tempPos);
-                                                temp1.Add("myTeam", false);
-                                                temp1.Add("id", newId);
-                                                temp1.Add("action", "add");
-                                                temp1.Add("color", "silver");
-                                                temp1.Add("pos", tempPos);
-                                            }
-                                            else if (tempId.Substring(0, 2).Equals("kn"))
-                                            {
-                                                player1.knights[tempId]["state"] = "opp";
-                                                int tempPos = findAndFillPlace("2");
-                                                string newId = "so" + PlayerData.RandomString(7);
-                                                int tempPower = 0;
-                                                if (Convert.ToInt32(player1.knights[tempId]["power"]) == 6)
-                                                {
-                                                    tempPower = 4;
-                                                }
-                                                else if (Convert.ToInt32(player1.knights[tempId]["power"]) == 5)
-                                                {
-                                                    tempPower = 3;
-                                                }
-                                                player2.addSoldier(tempPos / 10, tempPos % 10, tempPower, "king", newId);
-                                                temp2.Add("myTeam", true);
-                                                temp2.Add("id", newId);
-                                                temp2.Add("action", "add");
-                                                temp2.Add("type", "soldier");
-                                                temp2.Add("color", "bronze");
-                                                temp2.Add("power", tempPower);
-                                                temp2.Add("pos", tempPos);
-                                                temp1.Add("myTeam", false);
-                                                temp1.Add("id", newId);
-                                                temp1.Add("action", "add");
-                                                temp1.Add("color", "bronze");
-                                                temp1.Add("pos", tempPos);
-                                            }
-                                            else if (tempId.Substring(0, 2).Equals("so"))
-                                            {
-                                                player1.soldiers[tempId]["state"] = "opp";
-                                                int tempPos = findAndFillPlace("2");
-                                                string newId = "so" + PlayerData.RandomString(7);
-                                                int tempPower = 1;
-                                                if (Convert.ToInt32(player1.soldiers[tempId]["power"]) == 4)
-                                                {
-                                                    tempPower = 2;
-                                                }
-                                                player2.addSoldier(tempPos / 10, tempPos % 10, tempPower, "king", newId);
-                                                temp2.Add("myTeam", true);
-                                                temp2.Add("id", newId);
-                                                temp2.Add("action", "add");
-                                                temp2.Add("type", "soldier");
-                                                temp2.Add("color", "bronze");
-                                                temp2.Add("power", tempPower);
-                                                temp2.Add("pos", tempPos);
-                                                temp1.Add("myTeam", false);
-                                                temp1.Add("id", newId);
-                                                temp1.Add("action", "add");
-                                                temp1.Add("color", "bronze");
-                                                temp1.Add("pos", tempPos);
-                                            }
-                                            msg1.listdictdata.Add(temp1);
-                                            msg2.listdictdata.Add(temp2);
-                                        }
-                                        if (Convert.ToString(player2.commanderl1["state"]) == "alive")
-                                        {
-                                            //player2.commanderl1["serves"] = "king";
-                                            player2.commanderl1["state"] = "change";
-                                            string tempid1 = Convert.ToString(player2.commanderl1["id"]);
-                                            tempid1 = "kn" + tempid1.Substring(2);
-                                            player2.positionIdMatcher.Remove(Convert.ToInt32(player2.commanderl1["posI"]) * 10 + Convert.ToInt32(player2.commanderl1["posJ"]));
-                                            player2.addKnight(Convert.ToInt32(player2.commanderl1["posI"]), Convert.ToInt32(player2.commanderl1["posJ"]), 5, "king", tempid1);
-                                            Dictionary<string, object> temp1 = new Dictionary<string, object> { };
-                                            Dictionary<string, object> temp2 = new Dictionary<string, object> { };
-                                            temp2.Add("myTeam", true);
-                                            temp2.Add("id", player2.commanderl1["id"]);
-                                            temp2.Add("action", "changeserves");
-                                            temp2.Add("newId", tempid1);
-                                            temp2.Add("color", "silver");
-                                            temp1.Add("myTeam", false);
-                                            temp1.Add("id", player2.commanderl1["id"]);
-                                            temp1.Add("action", "changeserves");
-                                            temp1.Add("newId", tempid1);
-                                            temp1.Add("color", "silver");
-                                            msg1.listdictdata.Add(temp1);
-                                            msg2.listdictdata.Add(temp2);
-                                        }
-                                        foreach (KeyValuePair<string, Dictionary<string, object>> tempItem in player2.knights)
-                                        {
-                                            if (Convert.ToString(tempItem.Value["state"]) == "alive" && Convert.ToString(tempItem.Value["serves"]) == "lord1")
-                                            {
-                                                tempItem.Value["power"] = 5;
-                                                tempItem.Value["serves"] = "king";
-                                                player2.knights[tempItem.Key] = tempItem.Value;
-                                                Dictionary<string, object> temp2 = new Dictionary<string, object> { };
-                                                temp2.Add("myTeam", true);
-                                                temp2.Add("id", tempItem.Value["id"]);
-                                                temp2.Add("action", "changeserves");
-                                                temp2.Add("newId", tempItem.Value["id"]);
-                                                temp2.Add("color", "silver");
-                                                msg2.listdictdata.Add(temp2);
-                                            }
-                                        }
-                                        foreach (KeyValuePair<string, Dictionary<string, object>> tempItem in player2.soldiers)
-                                        {
-                                            if (Convert.ToString(tempItem.Value["state"]) == "alive" && Convert.ToString(tempItem.Value["serves"]) == "lord1")
-                                            {
-                                                tempItem.Value["power"] = 1;
-                                                tempItem.Value["serves"] = "king";
-                                                player2.knights[tempItem.Key] = tempItem.Value;
-                                                Dictionary<string, object> temp2 = new Dictionary<string, object> { };
-                                                temp2.Add("myTeam", true);
-                                                temp2.Add("id", tempItem.Value["id"]);
-                                                temp2.Add("action", "changeserves");
-                                                temp2.Add("newId", tempItem.Value["id"]);
-                                                temp2.Add("color", "bronze");
-                                                msg2.listdictdata.Add(temp2);
-                                            }
-                                        }
-                                        Dictionary<string, object> temp12 = new Dictionary<string, object> { };
-                                        Dictionary<string, object> temp22 = new Dictionary<string, object> { };
-                                        temp22.Add("myTeam", false);
-                                        temp22.Add("id", "");
-                                        temp22.Add("action", "clearfort");
-                                        temp22.Add("fort", "1");
-                                        temp12.Add("myTeam", true);
-                                        temp12.Add("id", "");
-                                        temp12.Add("action", "clearfort");
-                                        temp12.Add("fort", "1");
-                                        player1.fort1 = null;
-                                        player1.positionIdMatcher.Remove(dest);
-                                        msg1.listdictdata.Add(temp12);
-                                        msg2.listdictdata.Add(temp22);
-                                    }
-                                    else if (id1.Substring(0, 2).Equals("l2"))
-                                    {
-                                        player1.lord2["state"] = "dead";
-                                        for (int i = 0; i < player1.fort2.Count; i++)
-                                        {
-                                            string tempId = player1.fort2[i];
-                                            Dictionary<string, object> temp1 = new Dictionary<string, object> { };
-                                            Dictionary<string, object> temp2 = new Dictionary<string, object> { };
-                                            if (tempId.Substring(0, 1).Equals("c") || (tempId.Substring(0, 2).Equals("kn") && Convert.ToInt32(player2.knights[tempId]["power"]) == 7))
-                                            {
-                                                if (tempId.Substring(0, 1).Equals("c"))
-                                                {
-                                                    player1.commanderl2["state"] = "opp";
-                                                }
-                                                else if (tempId.Substring(0, 2).Equals("kn"))
-                                                {
-                                                    player1.knights[tempId]["state"] = "opp";
-                                                }
-                                                int tempPos = findAndFillPlace("2");
-                                                string newId = "kn" + PlayerData.RandomString(7);
-                                                player2.addKnight(tempPos / 10, tempPos % 10, 5, "king", newId);
-                                                temp2.Add("myTeam", true);
-                                                temp2.Add("id", newId);
-                                                temp2.Add("action", "add");
-                                                temp2.Add("type", "knight");
-                                                temp2.Add("color", "silver");
-                                                temp2.Add("power", 5);
-                                                temp2.Add("pos", tempPos);
-                                                temp1.Add("myTeam", false);
-                                                temp1.Add("id", newId);
-                                                temp1.Add("action", "add");
-                                                temp1.Add("color", "silver");
-                                                temp1.Add("pos", tempPos);
-                                            }
-                                            else if (tempId.Substring(0, 2).Equals("kn"))
-                                            {
-                                                player1.knights[tempId]["state"] = "opp";
-                                                int tempPos = findAndFillPlace("1");
-                                                string newId = "so" + PlayerData.RandomString(7);
-                                                int tempPower = 0;
-                                                if (Convert.ToInt32(player1.knights[tempId]["power"]) == 6)
-                                                {
-                                                    tempPower = 4;
-                                                }
-                                                else if (Convert.ToInt32(player1.knights[tempId]["power"]) == 5)
-                                                {
-                                                    tempPower = 3;
-                                                }
-                                                player2.addSoldier(tempPos / 10, tempPos % 10, tempPower, "king", newId);
-                                                temp2.Add("myTeam", true);
-                                                temp2.Add("id", newId);
-                                                temp2.Add("action", "add");
-                                                temp2.Add("type", "soldier");
-                                                temp2.Add("color", "bronze");
-                                                temp2.Add("power", tempPower);
-                                                temp2.Add("pos", tempPos);
-                                                temp1.Add("myTeam", false);
-                                                temp1.Add("id", newId);
-                                                temp1.Add("action", "add");
-                                                temp1.Add("color", "bronze");
-                                                temp1.Add("pos", tempPos);
-                                            }
-                                            else if (tempId.Substring(0, 2).Equals("so"))
-                                            {
-                                                player1.soldiers[tempId]["state"] = "opp";
-                                                int tempPos = findAndFillPlace("1");
-                                                string newId = "so" + PlayerData.RandomString(7);
-                                                int tempPower = 1;
-                                                if (Convert.ToInt32(player1.soldiers[tempId]["power"]) == 4)
-                                                {
-                                                    tempPower = 2;
-                                                }
-                                                player2.addSoldier(tempPos / 10, tempPos % 10, tempPower, "king", newId);
-                                                temp2.Add("myTeam", true);
-                                                temp2.Add("id", newId);
-                                                temp2.Add("action", "add");
-                                                temp2.Add("type", "soldier");
-                                                temp2.Add("color", "bronze");
-                                                temp2.Add("power", tempPower);
-                                                temp2.Add("pos", tempPos);
-                                                temp1.Add("myTeam", false);
-                                                temp1.Add("id", newId);
-                                                temp1.Add("action", "add");
-                                                temp1.Add("color", "bronze");
-                                                temp1.Add("pos", tempPos);
-                                            }
-                                            msg1.listdictdata.Add(temp1);
-                                            msg2.listdictdata.Add(temp2);
-                                        }
-                                        if (Convert.ToString(player2.commanderl2["state"]) == "alive")
-                                        {
-                                            //player2.commanderl1["serves"] = "king";
-                                            player2.commanderl2["state"] = "change";
-                                            string tempid1 = Convert.ToString(player2.commanderl2["id"]);
-                                            tempid1 = "kn" + tempid1.Substring(2);
-                                            player2.positionIdMatcher.Remove(Convert.ToInt32(player2.commanderl2["posI"]) * 10 + Convert.ToInt32(player2.commanderl2["posJ"]));
-                                            player2.addKnight(Convert.ToInt32(player2.commanderl2["posI"]), Convert.ToInt32(player2.commanderl2["posJ"]), 5, "king", tempid1);
-                                            Dictionary<string, object> temp1 = new Dictionary<string, object> { };
-                                            Dictionary<string, object> temp2 = new Dictionary<string, object> { };
-                                            temp2.Add("myTeam", true);
-                                            temp2.Add("id", player2.commanderl2["id"]);
-                                            temp2.Add("action", "changeserves");
-                                            temp2.Add("newId", tempid1);
-                                            temp2.Add("color", "silver");
-                                            temp1.Add("myTeam", false);
-                                            temp1.Add("id", player2.commanderl2["id"]);
-                                            temp1.Add("action", "changeserves");
-                                            temp1.Add("newId", tempid1);
-                                            temp1.Add("color", "silver");
-                                            msg1.listdictdata.Add(temp1);
-                                            msg2.listdictdata.Add(temp2);
-                                        }
-                                        foreach (KeyValuePair<string, Dictionary<string, object>> tempItem in player2.knights)
-                                        {
-                                            if (Convert.ToString(tempItem.Value["state"]) == "alive" && Convert.ToString(tempItem.Value["serves"]) == "lord2")
-                                            {
-                                                tempItem.Value["power"] = 5;
-                                                tempItem.Value["serves"] = "king";
-                                                player2.knights[tempItem.Key] = tempItem.Value;
-                                                Dictionary<string, object> temp2 = new Dictionary<string, object> { };
-                                                temp2.Add("myTeam", true);
-                                                temp2.Add("id", tempItem.Value["id"]);
-                                                temp2.Add("action", "changeserves");
-                                                temp2.Add("newId", tempItem.Value["id"]);
-                                                temp2.Add("color", "silver");
-                                                msg2.listdictdata.Add(temp2);
-                                            }
-                                        }
-                                        foreach (KeyValuePair<string, Dictionary<string, object>> tempItem in player2.soldiers)
-                                        {
-                                            if (Convert.ToString(tempItem.Value["state"]) == "alive" && Convert.ToString(tempItem.Value["serves"]) == "lord2")
-                                            {
-                                                tempItem.Value["power"] = 1;
-                                                tempItem.Value["serves"] = "king";
-                                                player2.knights[tempItem.Key] = tempItem.Value;
-                                                Dictionary<string, object> temp2 = new Dictionary<string, object> { };
-                                                temp2.Add("myTeam", true);
-                                                temp2.Add("id", tempItem.Value["id"]);
-                                                temp2.Add("action", "changeserves");
-                                                temp2.Add("newId", tempItem.Value["id"]);
-                                                temp2.Add("color", "bronze");
-                                                msg2.listdictdata.Add(temp2);
-                                            }
-                                        }
-                                        Dictionary<string, object> temp12 = new Dictionary<string, object> { };
-                                        Dictionary<string, object> temp22 = new Dictionary<string, object> { };
-                                        temp22.Add("myTeam", false);
-                                        temp22.Add("id", "");
-                                        temp22.Add("action", "clearfort");
-                                        temp22.Add("fort", "2");
-                                        temp12.Add("myTeam", true);
-                                        temp12.Add("id", "");
-                                        temp12.Add("action", "clearfort");
-                                        temp12.Add("fort", "2");
-                                        player1.fort2 = null;
-                                        player1.positionIdMatcher.Remove(dest);
-                                        msg1.listdictdata.Add(temp12);
-                                        msg2.listdictdata.Add(temp22);
-                                    }
+                                    MovePiece(player2.king, player2, id2, source, dest, "gold", 2, msg1, msg2);
+                                    LoD(player1, player2, id1, true, msg1, msg2, type1, type2, dest);
                                 }
                                 else
                                 {
-                                    SimpleMessage msgg2 = new SimpleMessage(MessageType.GameResult, "Your King Died.You lost the war");
-                                    SimpleMessage msgg1 = new SimpleMessage(MessageType.GameResult, "Your opponent's King Died.You won the war");
-                                    nserver.SendM(0, msgg1);
-                                    nserver.SendM(1, msgg2);
-                                    nserver.gamelift.TerminateGameSession();
-                                    this.resetServer();
-                                    nserver.ResetNetworkServer();
+                                    MovePiece(player2.king, player2, id2, source, dest, "gold", 1, msg1, msg2, false);
+                                    KingD(false);
                                     return;
                                 }
                             }
@@ -1418,159 +838,348 @@ public class Server : MonoBehaviour
                             {
                                 if (Convert.ToString(player1.commanderk["state"]) == "alive")
                                 {
-                                    SimpleMessage msgg2 = new SimpleMessage(MessageType.GameResult, "Your King Died.You lost the war");
-                                    SimpleMessage msgg1 = new SimpleMessage(MessageType.GameResult, "Your opponent's King Died.You won the war");
-                                    nserver.SendM(0, msgg1);
-                                    nserver.SendM(1, msgg2);
-                                    nserver.gamelift.TerminateGameSession();
-                                    this.resetServer();
-                                    nserver.ResetNetworkServer();
+                                    MovePiece(player2.king, player2, id2, source, dest, "gold", 1, msg1, msg2, false);
+                                    KingD(false);
                                     return;
                                 }
                                 else
                                 {
-                                    SimpleMessage msgg1 = new SimpleMessage(MessageType.GameResult, "Your King Died.You lost the war");
-                                    SimpleMessage msgg2 = new SimpleMessage(MessageType.GameResult, "Your opponent's King Died.You won the war");
-                                    nserver.SendM(0, msgg1);
-                                    nserver.SendM(1, msgg2);
-                                    nserver.gamelift.TerminateGameSession();
-                                    this.resetServer();
-                                    nserver.ResetNetworkServer();
+                                    MovePiece(player2.king, player2, id2, source, dest, "gold", 2, msg1, msg2);
+                                    KingD(true);
                                     return;
                                 }
                             }
                             else if (type1 == "commander")
                             {
-                                SimpleMessage msgg2 = new SimpleMessage(MessageType.GameResult, "Your King Died.You lost the war");
-                                SimpleMessage msgg1 = new SimpleMessage(MessageType.GameResult, "Your opponent's King Died.You won the war");
-                                nserver.SendM(0, msgg1);
-                                nserver.SendM(1, msgg2);
-                                nserver.gamelift.TerminateGameSession();
-                                this.resetServer();
-                                nserver.ResetNetworkServer();
-                                return;
+                                int f1 = source / 10;
+                                int f2 = dest / 10;
+                                if ((f2 - f1) == 1) //Head-On Attack
+                                {
+                                    MovePiece(player2.king, player2, id2, source, dest, "gold", 1, msg1, msg2, false);
+                                    KingD(false);
+                                    return;
+                                }
+                                else
+                                {
+                                    MovePiece(player2.king, player2, id2, source, dest, "gold", 2, msg1, msg2);
+                                    ComD(pieceData1, player1, true, id1, msg1, msg2, dest);
+                                }
                             }
-                            Dictionary<string, object> temp10 = new Dictionary<string, object> { };
-                            Dictionary<string, object> temp20 = new Dictionary<string, object> { };
-                            temp10.Add("myTeam", false);
-                            temp10.Add("id", id2);
-                            temp10.Add("action", "move");
-                            temp10.Add("source", source);
-                            temp10.Add("dest", dest);
-                            temp10.Add("color", "gold");
-                            temp20.Add("myTeam", true);
-                            temp20.Add("id", id2);
-                            temp20.Add("action", "move");
-                            temp20.Add("source", source);
-                            temp20.Add("dest", dest);
-                            temp20.Add("color", "gold");
-                            boardPosStates[source] = 0;
-                            boardPosStates[dest] = 2;
-                            player2.king["posI"] = Convert.ToInt32(Math.Floor(Convert.ToDouble(dest / 10)));
-                            player2.king["posJ"] = dest % 10;
-                            player2.positionIdMatcher.Remove(source);
-                            player2.positionIdMatcher.Add(dest, id2);
-                            msg1.listdictdata.Add(temp10);
-                            msg2.listdictdata.Add(temp20);
-                            msg1.listData = boardPosStates.ConvertAll<object>(k => k);
-                            msg2.listData = boardPosStates.ConvertAll<object>(k => k);
                         }
                         else if (type2 == "lord")
                         {
-
+                            Debug.Log("Type 2: Lord");
+                            if (type1 == "soldier" || type1 == "knight")
+                            {
+                                Debug.Log("Type 1: Soilder || Knight");
+                                MovePiece(pieceData2, player2, id2, source, dest, "gold", 2, msg1, msg2);
+                                SoOrKnDI(player1, player2, id1, true, msg1, msg2, type1, type2, dest);
+                            }
+                            else if (type1 == "lord")
+                            {
+                                Debug.Log("Type 1: Lord");
+                                bool win = false;
+                                if (id1.Substring(0, 2).Equals("l1"))
+                                {
+                                    if (player1.commanderl1["state"] != "alive")
+                                    {
+                                        win = true;
+                                    }
+                                }
+                                else if (id1.Substring(0, 2).Equals("l2"))
+                                {
+                                    if (player1.commanderl2["state"] != "alive")
+                                    {
+                                        win = true;
+                                    }
+                                }
+                                if (win)
+                                {
+                                    MovePiece(pieceData2, player2, id2, source, dest, "gold", 2, msg1, msg2);
+                                    LoD(player1, player2, id1, true, msg1, msg2, type1, type2, dest);
+                                }
+                                else
+                                {
+                                    MovePiece(pieceData2, player2, id2, source, dest, "gold", 1, msg1, msg2, false);
+                                    LoD(player2, player1, id2, false, msg1, msg2, type2, type1, dest);
+                                }
+                            }
+                            else if (type1 == "king")
+                            {
+                                Debug.Log("Type 1: King");
+                                if (Convert.ToString(player1.commanderk["state"]) == "alive")
+                                {
+                                    MovePiece(pieceData2, player2, id2, source, dest, "gold", 1, msg1, msg2, false);
+                                    LoD(player2, player1, id2, false, msg1, msg2, type2, type1, dest);
+                                }
+                                else
+                                {
+                                    MovePiece(pieceData2, player2, id2, source, dest, "gold", 2, msg1, msg2);
+                                    KingD(false);
+                                    return;
+                                }
+                            }
+                            else if (type1 == "commander")
+                            {
+                                Debug.Log("Type 1: Commander");
+                                int f1 = source / 10;
+                                int f2 = dest / 10;
+                                if ((f2 - f1) == 1) //Head-On Attack
+                                {
+                                    MovePiece(pieceData2, player2, id2, source, dest, "gold", 1, msg1, msg2, false);
+                                    LoD(player2, player1, id2, false, msg1, msg2, type2, type1, dest);
+                                }
+                                else
+                                {
+                                    MovePiece(pieceData2, player2, id2, source, dest, "gold", 2, msg1, msg2);
+                                    ComD(pieceData1, player1, true, id1, msg1, msg2, dest);
+                                }
+                                
+                            }
+                            
                         }
                         else if (type2 == "commander")
                         {
-
+                            Debug.Log("Type 2: Commander");
+                            MovePiece(pieceData2, player2, id2, source, dest, "silver", 2, msg1, msg2);
+                            if (type1 == "soldier" || type1 == "knight")
+                            {
+                                Debug.Log("Type 1: Soilder || Knight");
+                                SoOrKnDI(player1, player2, id1, true, msg1, msg2, type1, type2, dest);
+                            }
+                            else if (type1 == "lord")
+                            {
+                                Debug.Log("Type 1: Lord");
+                                LoD(player1, player2, id1, true, msg1, msg2, type1, type2, dest);
+                            }
+                            else if (type1 == "king")
+                            {
+                                Debug.Log("Type 1: King");
+                                KingD(true);
+                                return;
+                            }
+                            else if (type1 == "commander")
+                            {
+                                Debug.Log("Type 1: Commander");
+                                ComD(pieceData1, player1, true, id1, msg1, msg2, dest);
+                            }
                         }
                         else if (type2 == "knight")
                         {
-
+                            Debug.Log("Type 2: Knight");
+                            if (type1 == "soldier")
+                            {
+                                Debug.Log("Type 1: Soilder");
+                                MovePiece(pieceData2, player2, id2, source, dest, "silver", 2, msg1, msg2);
+                                SoOrKnDI(player1, player2, id1, true, msg1, msg2, type1, type2, dest);
+                            }
+                            else if (type1 == "knight")
+                            {
+                                Debug.Log("Type 1: Knight");
+                                int f1 = source / 10;
+                                int f2 = dest / 10;
+                                int curPower1 = Convert.ToInt32(pieceData1["power"]);
+                                int curPower2 = Convert.ToInt32(pieceData2["power"]);
+                                if ((f2 - f1) != 1)  //Sneak Attack
+                                {
+                                    curPower2++;
+                                }
+                                if (curPower2 >= curPower1)
+                                {
+                                    MovePiece(pieceData2, player2, id2, source, dest, "silver", 2, msg1, msg2);
+                                    SoOrKnDI(player1, player2, id1, true, msg1, msg2, type1, type2, dest);
+                                    if (Convert.ToInt32(pieceData2["power"]) != 7)
+                                    {
+                                        SoOrKnPI(pieceData2, id2, msg2);
+                                    }
+                                    else
+                                    {
+                                        if (Convert.ToInt32(pieceData1["power"]) == 7)
+                                        {
+                                            Dictionary<string, object> commander = player2.commanderk;
+                                            if (Convert.ToString(pieceData2["serves"]) == "king")
+                                            {
+                                                commander = player2.commanderk;
+                                            }
+                                            else if (Convert.ToString(pieceData2["serves"]) == "lord1")
+                                            {
+                                                commander = player2.commanderl1;
+                                            }
+                                            else if (Convert.ToString(pieceData2["serves"]) == "lord2")
+                                            {
+                                                commander = player2.commanderl2;
+                                            }
+                                            if (commander == null)
+                                            {
+                                                SoOrKnUp(pieceData2, player2, id2, false, msg1, msg2, type2, dest);
+                                            }
+                                            else if (Convert.ToString(commander["state"]) != "alive")
+                                            {
+                                                SoOrKnUp(pieceData2, player2, id2, false, msg1, msg2, type2, dest);
+                                            }
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    MovePiece(pieceData2, player2, id2, source, dest, "silver", 1, msg1, msg2, false);
+                                    SoOrKnDI(player2, player1, id2, false, msg1, msg2, type2, type1, dest);
+                                }
+                            }
+                            else if (type1 == "lord")
+                            {
+                                Debug.Log("Type 1: Lord");
+                                MovePiece(pieceData2, player2, id2, source, dest, "silver", 1, msg1, msg2, false);
+                                SoOrKnDI(player2, player1, id2, false, msg1, msg2, type2, type1, dest);
+                            }
+                            else if (type1 == "king")
+                            {
+                                Debug.Log("Type 1: King");
+                                MovePiece(pieceData2, player2, id2, source, dest, "silver", 1, msg1, msg2, false);
+                                SoOrKnDI(player2, player1, id2, false, msg1, msg2, type2, type1, dest);
+                            }
+                            else if (type1 == "commander")
+                            {
+                                Debug.Log("Type 1: Commander");
+                                int f1 = source / 10;
+                                int f2 = dest / 10;
+                                if ((f2 - f1) != 1) //Sneak Attack
+                                {
+                                    MovePiece(pieceData2, player2, id2, source, dest, "silver", 2, msg1, msg2);
+                                    ComD(pieceData1, player1, true, id1, msg1, msg2, dest);
+                                    if (Convert.ToInt32(pieceData2["power"]) != 7)
+                                    {
+                                        SoOrKnPI(pieceData2, id2, msg2);
+                                    }
+                                    else
+                                    {
+                                        Dictionary<string, object> commander = player2.commanderk;
+                                        if (Convert.ToString(pieceData2["serves"]) == "king")
+                                        {
+                                            commander = player2.commanderk;
+                                        }
+                                        else if (Convert.ToString(pieceData2["serves"]) == "lord1")
+                                        {
+                                            commander = player2.commanderl1;
+                                        }
+                                        else if (Convert.ToString(pieceData2["serves"]) == "lord2")
+                                        {
+                                            commander = player2.commanderl2;
+                                        }
+                                        if (commander == null)
+                                        {
+                                            SoOrKnUp(pieceData2, player2, id2, false, msg1, msg2, type2, dest);
+                                        }
+                                        else if (Convert.ToString(commander["state"]) != "alive")
+                                        {
+                                            SoOrKnUp(pieceData2, player2, id2, false, msg1, msg2, type2, dest);
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    MovePiece(pieceData2, player2, id2, source, dest, "silver", 1, msg1, msg2, false);
+                                    SoOrKnDI(player2, player1, id2, false, msg1, msg2, type2, type1, dest);
+                                }
+                            }
                         }
                         else if (type2 == "soldier")
                         {
-
+                            Debug.Log("Type 2: Soldier");
+                            if (type1 == "soldier")
+                            {
+                                Debug.Log("Type 1: Soilder");
+                                int f1 = source / 10;
+                                int f2 = dest / 10;
+                                int curPower1 = Convert.ToInt32(pieceData1["power"]);
+                                int curPower2 = Convert.ToInt32(pieceData2["power"]);
+                                if ((f2 - f1) != 1)  //Sneak Attack
+                                {
+                                    curPower2++;
+                                }
+                                if (curPower2 >= curPower1)
+                                {
+                                    MovePiece(pieceData2, player2, id2, source, dest, "bronze", 2, msg1, msg2);
+                                    SoOrKnDI(player1, player2, id1, true, msg1, msg2, type1, type2, dest);
+                                    if (Convert.ToInt32(pieceData2["power"]) != 4)
+                                    {
+                                        SoOrKnPI(pieceData2, id2, msg2);
+                                    }
+                                    else
+                                    {
+                                        if (Convert.ToInt32(pieceData1["power"]) == 4)
+                                        {
+                                            SoOrKnUp(pieceData2, player2, id2, false, msg1, msg2, type2, dest);
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    MovePiece(pieceData2, player2, id2, source, dest, "bronze", 1, msg1, msg2, false);
+                                    SoOrKnDI(player2, player1, id2, false, msg1, msg2, type2, type1, dest);
+                                }
+                            }
+                            else if (type2 == "knight")
+                            {
+                                Debug.Log("Type 2: Knight");
+                                MovePiece(pieceData2, player2, id2, source, dest, "silver", 1, msg1, msg2, false);
+                                SoOrKnDI(player2, player1, id2, false, msg1, msg2, type2, type1, dest);
+                            }
+                            else if (type2 == "lord")
+                            {
+                                Debug.Log("Type 2: Lord");
+                                MovePiece(pieceData2, player2, id2, source, dest, "silver", 1, msg1, msg2, false);
+                                SoOrKnDI(player2, player1, id2, false, msg1, msg2, type2, type1, dest);
+                            }
+                            else if (type2 == "king")
+                            {
+                                Debug.Log("Type 2: King");
+                                MovePiece(pieceData2, player2, id2, source, dest, "silver", 1, msg1, msg2, false);
+                                SoOrKnDI(player2, player1, id2, false, msg1, msg2, type2, type1, dest);
+                            }
+                            else if (type2 == "commander")
+                            {
+                                Debug.Log("Type 2: Commander");
+                                MovePiece(pieceData2, player2, id2, source, dest, "silver", 1, msg1, msg2, false);
+                                SoOrKnDI(player2, player1, id2, false, msg1, msg2, type2, type1, dest);
+                            }
                         }
                     }
                     else if (boardPosStates[dest] == 0)
                     {
                         Debug.Log("Handling Player Move:2:Move to empty space");
-                        Dictionary<string, object> temp11 = new Dictionary<string, object> { };
-                        Dictionary<string, object> temp21 = new Dictionary<string, object> { };
-                        temp11.Add("myTeam", false);
-                        temp11.Add("id", id2);
-                        temp11.Add("action", "move");
-                        temp11.Add("source", source);
-                        temp11.Add("dest", dest);
-                        temp21.Add("myTeam", true);
-                        temp21.Add("id", id2);
-                        temp21.Add("action", "move");
-                        temp21.Add("source", source);
-                        temp21.Add("dest", dest);
                         if (id2.Substring(0, 2).Equals("ki"))
                         {
-                            player2.king["posI"] = Convert.ToInt32(Math.Floor(Convert.ToDouble(dest / 10)));
-                            player2.king["posJ"] = dest % 10;
-                            temp11.Add("color", "gold");
-                            temp21.Add("color", "gold");
+                            MovePiece(player2.king, player2, id2, source, dest, "gold", 2, msg1, msg2);
                         }
                         else if (id2.Substring(0, 2).Equals("l1"))
                         {
-                            player2.lord1["posI"] = Convert.ToInt32(Math.Floor(Convert.ToDouble(dest / 10)));
-                            player2.lord1["posJ"] = dest % 10;
-                            temp11.Add("color", "gold");
-                            temp21.Add("color", "gold");
+                            MovePiece(player2.lord1, player2, id2, source, dest, "gold", 2, msg1, msg2);
                         }
                         else if (id2.Substring(0, 2).Equals("l2"))
                         {
-                            player2.lord2["posI"] = Convert.ToInt32(Math.Floor(Convert.ToDouble(dest / 10)));
-                            player2.lord2["posJ"] = dest % 10;
-                            temp11.Add("color", "gold");
-                            temp21.Add("color", "gold");
+                            MovePiece(player2.lord2, player2, id2, source, dest, "gold", 2, msg1, msg2);
                         }
                         else if (id2.Substring(0, 2).Equals("ck"))
                         {
-                            player2.commanderk["posI"] = Convert.ToInt32(Math.Floor(Convert.ToDouble(dest / 10)));
-                            player2.commanderk["posJ"] = dest % 10;
-                            temp11.Add("color", "silver");
-                            temp21.Add("color", "silver");
+                            MovePiece(player2.commanderk, player2, id2, source, dest, "silver", 2, msg1, msg2);
                         }
                         else if (id2.Substring(0, 2).Equals("c1"))
                         {
-                            player2.commanderl1["posI"] = Convert.ToInt32(Math.Floor(Convert.ToDouble(dest / 10)));
-                            player2.commanderl1["posJ"] = dest % 10;
-                            temp11.Add("color", "silver");
-                            temp21.Add("color", "silver");
+                            MovePiece(player2.commanderl1, player2, id2, source, dest, "silver", 2, msg1, msg2);
                         }
                         else if (id2.Substring(0, 2).Equals("c2"))
                         {
-                            player2.commanderl2["posI"] = Convert.ToInt32(Math.Floor(Convert.ToDouble(dest / 10)));
-                            player2.commanderl2["posJ"] = dest % 10;
-                            temp11.Add("color", "silver");
-                            temp21.Add("color", "silver");
+                            MovePiece(player2.commanderl2, player2, id2, source, dest, "silver", 2, msg1, msg2);
                         }
                         else if (id2.Substring(0, 2).Equals("kn"))
                         {
-                            player2.knights[id2]["posI"] = Convert.ToInt32(Math.Floor(Convert.ToDouble(dest / 10)));
-                            player2.knights[id2]["posJ"] = dest % 10;
-                            temp11.Add("color", "silver");
-                            temp21.Add("color", "silver");
+                            MovePiece(player2.knights[id2], player2, id2, source, dest, "silver", 2, msg1, msg2);
                         }
                         else if (id2.Substring(0, 2).Equals("so"))
                         {
-                            player2.soldiers[id2]["posI"] = Convert.ToInt32(Math.Floor(Convert.ToDouble(dest / 10)));
-                            player2.soldiers[id2]["posJ"] = dest % 10;
-                            temp11.Add("color", "bronze");
-                            temp21.Add("color", "bronze");
+                            MovePiece(player2.soldiers[id2], player2, id2, source, dest, "bronze", 2, msg1, msg2);
                         }
-                        boardPosStates[source] = 0;
-                        boardPosStates[dest] = 2;
-                        player2.positionIdMatcher.Remove(source);
-                        player2.positionIdMatcher.Add(dest, id2);
-                        msg1.listData = boardPosStates.ConvertAll<object>(k => k);
-                        msg2.listData = boardPosStates.ConvertAll<object>(k => k);
-                        msg1.listdictdata.Add(temp11);
-                        msg2.listdictdata.Add(temp21);
                     }
                 }
             }
@@ -1578,6 +1187,545 @@ public class Server : MonoBehaviour
             nserver.SendM(1, msg2);
             StartCoroutine(SendTurnChanged());
         }
+    }
+
+    public void MovePiece(Dictionary<string,object> pieceData ,PlayerData movePlayer,string moveId,int source,int dest,string color,int teamN,SimpleMessage msg1,SimpleMessage msg2,bool win=true)
+    {
+        Dictionary<string, object> movep = new Dictionary<string, object> { };
+        Dictionary<string, object> omovep = new Dictionary<string, object> { };
+        movep.Add("myTeam", true);
+        movep.Add("id", moveId);
+        movep.Add("action", "move");
+        movep.Add("source", source);
+        movep.Add("dest", dest);
+        movep.Add("color", color);
+        movep.Add("win", win);
+        omovep.Add("myTeam", false);
+        omovep.Add("id", moveId);
+        omovep.Add("action", "move");
+        omovep.Add("source", source);
+        omovep.Add("dest", dest);
+        omovep.Add("color", color);
+        omovep.Add("win", win);
+        boardPosStates[source] = 0;
+        boardPosStates[dest] = teamN;
+        pieceData["posI"] = Convert.ToInt32(Math.Floor(Convert.ToDouble(dest / 10)));
+        pieceData["posJ"] = dest % 10;
+        movePlayer.positionIdMatcher.Remove(source);
+        if (win)
+        {
+            movePlayer.positionIdMatcher.Add(dest, moveId);
+        }
+        msg1.listData = boardPosStates.ConvertAll<object>(k => k);
+        msg2.listData = boardPosStates.ConvertAll<object>(k => k);
+        if (teamN == 1)
+        {
+            msg1.listdictdata.Add(movep);
+            msg2.listdictdata.Add(omovep);
+        }
+        else if(teamN==2)
+        {
+            msg1.listdictdata.Add(omovep);
+            msg2.listdictdata.Add(movep);
+        }
+        
+    }
+
+    public void SoOrKnPI(Dictionary<string, object> powPieceData, string powId,SimpleMessage msg)
+    {
+        Dictionary<string, object> temp = new Dictionary<string, object> { };
+        temp.Add("myTeam", true);
+        temp.Add("id", powId);
+        temp.Add("action", "power");
+        temp.Add("color", Convert.ToString(powPieceData["color"]));
+        powPieceData["power"] = Convert.ToInt32(powPieceData["power"]) + 1;
+        msg.listdictdata.Add(temp);
+    }
+
+    public void SoOrKnUp(Dictionary<string,object> upPieceData,PlayerData upgradePlayer,string upId,bool team1U,SimpleMessage msg1,SimpleMessage msg2,string upType,int dest)
+    {
+        Dictionary<string, object> uptemp = new Dictionary<string, object> { };
+        Dictionary<string, object> ouptemp = new Dictionary<string, object> { };
+        uptemp.Add("myTeam", true);
+        ouptemp.Add("myTeam", false);
+        uptemp.Add("id", upId);
+        ouptemp.Add("id", upId);
+        uptemp.Add("action", "upgrade");
+        ouptemp.Add("action", "upgrade");
+        upPieceData["state"] = "upgraded";
+        upgradePlayer.positionIdMatcher.Remove(dest);
+        if (upType == "soldier")
+        {
+            uptemp.Add("color", "bronze");
+            uptemp.Add("newcolor", "silver");
+            uptemp.Add("newId", "kn"+upId.Substring(2));
+            ouptemp.Add("color", "bronze");
+            ouptemp.Add("newcolor", "silver");
+            ouptemp.Add("newId", "kn" + upId.Substring(2));
+            upgradePlayer.addKnight(Convert.ToInt32(upPieceData["posI"]),Convert.ToInt32(upPieceData["posJ"]),5,Convert.ToString(upPieceData["serves"]), "kn" + upId.Substring(2));
+        }
+        else if(upType=="knight")
+        {
+            uptemp.Add("color", "silver");
+            uptemp.Add("newcolor", "silver");
+            ouptemp.Add("color", "silver");
+            ouptemp.Add("newcolor", "silver");
+            if (Convert.ToString(upPieceData["serves"])=="king")
+            {
+                upgradePlayer.commanderk = null;
+                upgradePlayer.InitializeCommanderK(Convert.ToInt32(upPieceData["posI"]),Convert.ToInt32(upPieceData["posJ"]),"ck"+upId.Substring(2));
+                uptemp.Add("newId", "ck" + upId.Substring(2));
+                ouptemp.Add("newId", "ck" + upId.Substring(2));
+            }
+            else if (Convert.ToString(upPieceData["serves"]) == "lord1")
+            {
+                upgradePlayer.commanderl1 = null;
+                upgradePlayer.InitializeCommanderL1(Convert.ToInt32(upPieceData["posI"]), Convert.ToInt32(upPieceData["posJ"]), "ck" + upId.Substring(2));
+                uptemp.Add("newId", "ck" + upId.Substring(2));
+                ouptemp.Add("newId", "ck" + upId.Substring(2));
+            }
+            else if (Convert.ToString(upPieceData["serves"]) == "lord2")
+            {
+                upgradePlayer.commanderl2 = null;
+                upgradePlayer.InitializeCommanderL2(Convert.ToInt32(upPieceData["posI"]), Convert.ToInt32(upPieceData["posJ"]), "ck" + upId.Substring(2));
+                uptemp.Add("newId", "ck" + upId.Substring(2));
+                ouptemp.Add("newId", "ck" + upId.Substring(2));
+            }
+        }
+        if (team1U)
+        {
+            msg1.listdictdata.Add(uptemp);
+            msg2.listdictdata.Add(ouptemp);
+        }
+        else
+        {
+            msg1.listdictdata.Add(ouptemp);
+            msg2.listdictdata.Add(uptemp);
+        }
+    }
+
+    public void SoOrKnDI(PlayerData deadPlayer,PlayerData killPlayer,string deadId,bool team1D,SimpleMessage msg1,SimpleMessage msg2,string deadType,string killType,int dest)
+    {
+        Dictionary<string, object> deadtemp = new Dictionary<string, object> { };
+        Dictionary<string, object> killtemp = new Dictionary<string, object> { };
+        deadtemp.Add("myTeam", true);
+        deadtemp.Add("id", deadId);
+        killtemp.Add("myTeam", false);
+        killtemp.Add("id", deadId);
+        if (deadType == "soldier")
+        {
+            if (Convert.ToString(deadPlayer.soldiers[deadId]["serves"]) == "king")
+            {
+                deadtemp.Add("action", "dead");
+                killtemp.Add("action", "dead");
+                deadPlayer.soldiers[deadId]["state"] = "dead";
+            }
+            else
+            {
+                deadtemp.Add("action", "injured");
+                killtemp.Add("action", "injured");
+                deadPlayer.soldiers[deadId]["state"] = "injured";
+                if(Convert.ToString(deadPlayer.soldiers[deadId]["serves"]) == "lord1")
+                {
+                    deadtemp.Add("fort", "1");
+                    killtemp.Add("fort", "1");
+                    deadtemp.Add("fortId", deadId);
+                    killtemp.Add("fortId", deadId);
+                    deadPlayer.fort1.Add(deadId);
+                }
+                else if (Convert.ToString(deadPlayer.soldiers[deadId]["serves"]) == "lord2")
+                {
+                    deadtemp.Add("fort", "2");
+                    killtemp.Add("fort", "2");
+                    deadtemp.Add("fortId", deadId);
+                    killtemp.Add("fortId", deadId);
+                    deadPlayer.fort2.Add(deadId);
+                }
+            }
+            deadtemp.Add("color", "bronze");
+            killtemp.Add("color", "bronze");
+        }
+        else if (deadType == "knight")
+        {
+            if (Convert.ToString(deadPlayer.knights[deadId]["serves"]) == "king")
+            {
+                deadtemp.Add("action", "dead");
+                killtemp.Add("action", "dead");
+            }
+            else
+            {
+                deadtemp.Add("action", "injured");
+                killtemp.Add("action", "injured");
+                if (Convert.ToString(deadPlayer.knights[deadId]["serves"]) == "lord1")
+                {
+                    deadtemp.Add("fort", "1");
+                    killtemp.Add("fort", "1");
+                    deadtemp.Add("fortId", deadId);
+                    killtemp.Add("fortId", deadId);
+                    deadPlayer.fort1.Add(deadId);
+                }
+                else if (Convert.ToString(deadPlayer.knights[deadId]["serves"]) == "lord2")
+                {
+                    deadtemp.Add("fort", "2");
+                    killtemp.Add("fort", "2");
+                    deadtemp.Add("fortId", deadId);
+                    killtemp.Add("fortId", deadId);
+                    deadPlayer.fort2.Add(deadId);
+                }
+            }
+            deadtemp.Add("color", "silver");
+            killtemp.Add("color", "silver");
+        }
+        deadPlayer.positionIdMatcher.Remove(dest);
+        if (team1D)
+        {
+            msg1.listdictdata.Add(deadtemp);
+            msg2.listdictdata.Add(killtemp);
+        }
+        else
+        {
+            msg1.listdictdata.Add(killtemp);
+            msg2.listdictdata.Add(deadtemp);
+        }
+    }
+
+    public void LoD(PlayerData deadPlayer, PlayerData killPlayer, string deadId, bool team1D, SimpleMessage msg1, SimpleMessage msg2, string deadType, string killType, int dest)
+    {
+        Dictionary<string, object> deadtemp = new Dictionary<string, object> { };
+        Dictionary<string, object> killtemp = new Dictionary<string, object> { };
+        deadtemp.Add("myTeam", true);
+        killtemp.Add("myTeam", false);
+        deadtemp.Add("id", deadId);
+        killtemp.Add("id", deadId);
+        deadtemp.Add("action", "dead");
+        killtemp.Add("action", "dead");
+        deadtemp.Add("color", "gold");
+        killtemp.Add("color", "gold");
+        if (team1D)
+        {
+            msg1.listdictdata.Add(deadtemp);
+            msg2.listdictdata.Add(killtemp);
+        }
+        else
+        {
+            msg1.listdictdata.Add(killtemp);
+            msg2.listdictdata.Add(deadtemp);
+        }
+        List<string> fort = deadPlayer.fort1;
+        string lordn = "1";
+        Dictionary<string, object> commander = deadPlayer.commanderl1;
+        if (deadId.Substring(0, 2).Equals("l1"))
+        {
+            deadPlayer.lord1["state"] = "dead";
+            fort = deadPlayer.fort1;
+            lordn = "1";
+            commander = deadPlayer.commanderl1;
+        }
+        else
+        {
+            deadPlayer.lord2["state"] = "dead";
+            fort = deadPlayer.fort2;
+            lordn = "2";
+            commander = deadPlayer.commanderl2;
+        }
+        
+        for (int i = 0; i < fort.Count; i++)
+        {
+            string tempId = fort[i];
+            Dictionary<string, object> addptemp = new Dictionary<string, object> { };
+            Dictionary<string, object> oaddptemp = new Dictionary<string, object> { };
+            if ((tempId.Substring(0, 2).Equals("kn") && Convert.ToInt32(deadPlayer.knights[tempId]["power"]) == 7))
+            {
+                if (tempId.Substring(0, 2).Equals("kn"))
+                {
+                    deadPlayer.knights[tempId]["state"] = "opp";
+                }
+                int tempPos = -1;
+                if (team1D)
+                {
+                    tempPos = findAndFillPlace("2");
+                }
+                else
+                {
+                    tempPos = findAndFillPlace("1");
+                }
+                string newId = "kn" + PlayerData.RandomString(7);
+                killPlayer.addKnight(tempPos / 10, tempPos % 10, 5, "king", newId);
+                addptemp.Add("myTeam", true);
+                addptemp.Add("id", newId);
+                addptemp.Add("action", "add");
+                addptemp.Add("type", "knight");
+                addptemp.Add("color", "silver");
+                addptemp.Add("power", 5);
+                addptemp.Add("pos", tempPos);
+                oaddptemp.Add("myTeam", false);
+                oaddptemp.Add("id", newId);
+                oaddptemp.Add("action", "add");
+                oaddptemp.Add("color", "silver");
+                oaddptemp.Add("pos", tempPos);
+            }
+            else if (tempId.Substring(0, 2).Equals("kn"))
+            {
+                deadPlayer.knights[tempId]["state"] = "opp";
+                int tempPos = -1;
+                if (team1D)
+                {
+                    tempPos = findAndFillPlace("2");
+                }
+                else
+                {
+                    tempPos = findAndFillPlace("1");
+                }
+                string newId = "so" + PlayerData.RandomString(7);
+                int tempPower = 0;
+                if (Convert.ToInt32(deadPlayer.knights[tempId]["power"]) == 6)
+                {
+                    tempPower = 4;
+                }
+                else if (Convert.ToInt32(deadPlayer.knights[tempId]["power"]) == 5)
+                {
+                    tempPower = 3;
+                }
+                killPlayer.addSoldier(tempPos / 10, tempPos % 10, tempPower, "king", newId);
+                addptemp.Add("myTeam", true);
+                addptemp.Add("id", newId);
+                addptemp.Add("action", "add");
+                addptemp.Add("type", "soldier");
+                addptemp.Add("color", "bronze");
+                addptemp.Add("power", tempPower);
+                addptemp.Add("pos", tempPos);
+                oaddptemp.Add("myTeam", false);
+                oaddptemp.Add("id", newId);
+                oaddptemp.Add("action", "add");
+                oaddptemp.Add("color", "bronze");
+                oaddptemp.Add("pos", tempPos);
+            }
+            else if (tempId.Substring(0, 2).Equals("so"))
+            {
+                deadPlayer.soldiers[tempId]["state"] = "opp";
+                int tempPos = -1;
+                if (team1D)
+                {
+                    tempPos = findAndFillPlace("2");
+                }
+                else
+                {
+                    tempPos = findAndFillPlace("1");
+                }
+                string newId = "so" + PlayerData.RandomString(7);
+                int tempPower = 1;
+                if (Convert.ToInt32(deadPlayer.soldiers[tempId]["power"]) == 4)
+                {
+                    tempPower = 2;
+                }
+                killPlayer.addSoldier(tempPos / 10, tempPos % 10, tempPower, "king", newId);
+                addptemp.Add("myTeam", true);
+                addptemp.Add("id", newId);
+                addptemp.Add("action", "add");
+                addptemp.Add("type", "soldier");
+                addptemp.Add("color", "bronze");
+                addptemp.Add("power", tempPower);
+                addptemp.Add("pos", tempPos);
+                oaddptemp.Add("myTeam", false);
+                oaddptemp.Add("id", newId);
+                oaddptemp.Add("action", "add");
+                oaddptemp.Add("color", "bronze");
+                oaddptemp.Add("pos", tempPos);
+            }
+            if (team1D)
+            {
+                msg1.listdictdata.Add(oaddptemp);
+                msg2.listdictdata.Add(addptemp);
+            }
+            else
+            {
+                msg1.listdictdata.Add(addptemp);
+                msg2.listdictdata.Add(oaddptemp);
+            }
+        }
+        if (Convert.ToString(commander["state"]) == "alive")
+        {
+            //player1.commanderl1["serves"] = "king";
+            commander["state"] = "change";
+            string tempid1 = Convert.ToString(commander["id"]);
+            tempid1 = "kn" + tempid1.Substring(2);
+            deadPlayer.positionIdMatcher.Remove(Convert.ToInt32(commander["posI"]) * 10 + Convert.ToInt32(commander["posJ"]));
+            deadPlayer.addKnight(Convert.ToInt32(commander["posI"]), Convert.ToInt32(commander["posJ"]), 5, "king", tempid1);
+            Dictionary<string, object> chtemp = new Dictionary<string, object> { };
+            Dictionary<string, object> ochtemp = new Dictionary<string, object> { };
+            chtemp.Add("myTeam", true);
+            chtemp.Add("id", commander["id"]);
+            chtemp.Add("action", "changeserves");
+            chtemp.Add("newId", tempid1);
+            chtemp.Add("color", "silver");
+            ochtemp.Add("myTeam", false);
+            ochtemp.Add("id", commander["id"]);
+            ochtemp.Add("action", "changeserves");
+            ochtemp.Add("newId", tempid1);
+            ochtemp.Add("color", "silver");
+            if (team1D)
+            {
+                msg1.listdictdata.Add(chtemp);
+                msg2.listdictdata.Add(ochtemp);
+            }
+        }
+        Dictionary<string, Dictionary<string, object>> tempDictDict = new Dictionary<string, Dictionary<string, object>> { };
+        foreach (KeyValuePair<string, Dictionary<string, object>> tempItem in deadPlayer.knights)
+        {
+            Dictionary<string, object> tempDict = new Dictionary<string, object>(tempItem.Value);
+            if (Convert.ToString(tempDict["state"]) == "alive" && Convert.ToString(tempDict["serves"]) == "lord"+lordn)
+            {
+                tempDict["power"] = 5;
+                tempDict["serves"] = "king";
+                Dictionary<string, object> temp1 = new Dictionary<string, object> { };
+                temp1.Add("myTeam", true);
+                temp1.Add("id", tempDict["id"]);
+                temp1.Add("action", "changeserves");
+                temp1.Add("newId", tempDict["id"]);
+                temp1.Add("color", "silver");
+                if (team1D)
+                {
+                    msg1.listdictdata.Add(temp1);
+                }
+                else
+                {
+                    msg2.listdictdata.Add(temp1);
+                }
+            }
+            tempDictDict.Add(tempItem.Key, tempDict);
+        }
+        deadPlayer.knights= new Dictionary<string, Dictionary<string, object>>(tempDictDict);
+        tempDictDict = new Dictionary<string, Dictionary<string, object>> { };
+        foreach (KeyValuePair<string, Dictionary<string, object>> tempItem in deadPlayer.soldiers)
+        {
+            Dictionary<string, object> tempDict = new Dictionary<string, object>(tempItem.Value);
+            if (Convert.ToString(tempItem.Value["state"]) == "alive" && Convert.ToString(tempItem.Value["serves"]) == "lord"+lordn)
+            {
+                tempDict["power"] = 1;
+                tempDict["serves"] = "king";
+                Dictionary<string, object> temp1 = new Dictionary<string, object> { };
+                temp1.Add("myTeam", true);
+                temp1.Add("id", tempDict["id"]);
+                temp1.Add("action", "changeserves");
+                temp1.Add("newId", tempDict["id"]);
+                temp1.Add("color", "bronze");
+                if (team1D)
+                {
+                    msg1.listdictdata.Add(temp1);
+                }
+                else
+                {
+                    msg2.listdictdata.Add(temp1);
+                }
+            }
+            tempDictDict.Add(tempItem.Key, tempDict);
+        }
+        deadPlayer.soldiers= new Dictionary<string, Dictionary<string, object>>(tempDictDict);
+        Dictionary<string, object> clrf = new Dictionary<string, object> { };
+        Dictionary<string, object> oclrf = new Dictionary<string, object> { };
+        clrf.Add("myTeam", true);
+        clrf.Add("id", "");
+        clrf.Add("action", "clearfort");
+        clrf.Add("fort", lordn);
+        oclrf.Add("myTeam", false);
+        oclrf.Add("id", "");
+        oclrf.Add("action", "clearfort");
+        oclrf.Add("fort", lordn);
+        fort = null;
+        deadPlayer.positionIdMatcher.Remove(dest);
+        if (team1D)
+        {
+            msg1.listdictdata.Add(clrf);
+            msg2.listdictdata.Add(oclrf);
+        }
+        else
+        {
+            msg1.listdictdata.Add(oclrf);
+            msg2.listdictdata.Add(clrf);
+        }
+    }
+
+    public void ComD(Dictionary<string,object> deadPiece,PlayerData deadPlayer,bool team1D,string deadId,SimpleMessage msg1,SimpleMessage msg2,int dest)
+    {
+        Dictionary<string, object> deadtemp = new Dictionary<string, object> { };
+        Dictionary<string, object> killtemp = new Dictionary<string, object> { };
+        deadtemp.Add("myTeam", true);
+        killtemp.Add("myTeam", false);
+        deadtemp.Add("id", deadId);
+        killtemp.Add("id", deadId);
+        deadtemp.Add("color", "silver");
+        killtemp.Add("color", "silver");
+        deadPlayer.positionIdMatcher.Remove(dest);
+        if (deadId.Substring(0, 2).Equals("ck"))
+        {
+            deadPiece["state"] = "dead";
+            deadtemp.Add("action", "dead");
+            killtemp.Add("action", "dead");
+        }
+        else if (deadId.Substring(0, 2).Equals("c1"))
+        {
+            deadPiece["state"] = "injured";
+            deadtemp.Add("action", "injured");
+            killtemp.Add("action", "injured");
+            deadtemp.Add("fort", "1");
+            killtemp.Add("fort", "1");
+            deadPlayer.addKnight(Convert.ToInt32(deadPiece["posI"]), Convert.ToInt32(deadPiece["posJ"]), 7, "lord1", "kn" + deadId.Substring(2));
+            deadPlayer.knights["kn" + deadId.Substring(2)]["state"] = "injured";
+            deadPiece = null;
+            deadtemp.Add("fortId", "kn"+deadId.Substring(2));
+            killtemp.Add("fortId", "kn" + deadId.Substring(2));
+            deadPlayer.fort1.Add("kn" + deadId.Substring(2));
+        }
+        else if (deadId.Substring(0, 2).Equals("c2"))
+        {
+            deadPiece["state"] = "injured";
+            deadtemp.Add("action", "injured");
+            killtemp.Add("action", "injured");
+            deadtemp.Add("fort", "2");
+            killtemp.Add("fort", "2"); 
+            deadPlayer.addKnight(Convert.ToInt32(deadPiece["posI"]), Convert.ToInt32(deadPiece["posJ"]), 7, "lord1", "kn" + deadId.Substring(2));
+            deadPlayer.knights["kn" + deadId.Substring(2)]["state"] = "injured";
+            deadPiece = null;
+            deadtemp.Add("fortId", "kn" + deadId.Substring(2));
+            killtemp.Add("fortId", "kn" + deadId.Substring(2));
+            deadPlayer.fort2.Add("kn" + deadId.Substring(2));
+        }
+        deadPlayer.positionIdMatcher.Remove(dest);
+        if (team1D)
+        {
+            msg1.listdictdata.Add(deadtemp);
+            msg2.listdictdata.Add(killtemp);
+        }
+        else
+        {
+            msg2.listdictdata.Add(deadtemp);
+            msg1.listdictdata.Add(killtemp);
+        }
+    }
+
+    public void KingD(bool team1D)
+    {
+        if (team1D)
+        {
+            SimpleMessage msgg1 = new SimpleMessage(MessageType.GameResult, "Your King Died.You lost the war");
+            SimpleMessage msgg2 = new SimpleMessage(MessageType.GameResult, "Your opponent's King Died.You won the war");
+            msgg1.win = false;
+            msgg2.win = true;
+            nserver.SendM(0, msgg1);
+            nserver.SendM(1, msgg2);
+        }
+        else
+        {
+            SimpleMessage msgg2 = new SimpleMessage(MessageType.GameResult, "Your King Died.You lost the war");
+            SimpleMessage msgg1 = new SimpleMessage(MessageType.GameResult, "Your opponent's King Died.You won the war");
+            msgg1.win = true;
+            msgg2.win = false;
+            nserver.SendM(0, msgg1);
+            nserver.SendM(1, msgg2);
+        }
+        nserver.gamelift.TerminateGameSession();
+        this.resetServer();
+        nserver.ResetNetworkServer();
     }
 
     public void HandlePlayerStrategyRecieved(SimpleMessage msg)
